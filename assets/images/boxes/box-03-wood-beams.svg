@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="190" height="74" viewBox="0 0 190 74">
+  <title>Wood beams starter block</title>
+  <g id="wood-beam-stack">
+    <rect id="beam-base" x="2.5" y="2.5" width="185" height="69" fill="#B77A35" stroke="#2A261F" stroke-width="5"/>
+    <g id="beam-seams" fill="none" stroke="#6D451D" stroke-width="5">
+      <path d="M5 20H185M5 37H185M5 54H185"/>
+    </g>
+    <g id="wood-grain" fill="none" stroke="#E0A75D" stroke-linecap="round" stroke-width="2" opacity=".72">
+      <path d="M13 12C35 5 54 17 78 10S122 7 151 12 172 12 179 9"/>
+      <path d="M18 29C43 23 66 34 91 27S139 24 174 30"/>
+      <path d="M12 47C40 40 61 51 88 45S135 42 180 47"/>
+      <path d="M20 63C50 56 76 67 105 61S150 58 177 62"/>
+    </g>
+    <g id="beam-bolts" fill="#2A261F">
+      <circle cx="11" cy="11" r="2"/><circle cx="179" cy="11" r="2"/>
+      <circle cx="11" cy="63" r="2"/><circle cx="179" cy="63" r="2"/>
+    </g>
+  </g>
+</svg>

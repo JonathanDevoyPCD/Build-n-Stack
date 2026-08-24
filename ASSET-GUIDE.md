@@ -1,57 +1,76 @@
-# Build n' Stack asset handoff
+# Build n' Stack editable SVG asset guide
 
-The game already runs with procedural placeholder artwork. Add your transparent PNG files at the exact paths below, then change `GAME_CONFIG.assets.loadCustomSprites` near the top of `script.js` from `false` to `true`. No other JavaScript changes are required unless you want to change a block's physical size or material.
+The game now loads a complete SVG starter kit directly from `assets/images/`. Every SVG can be opened and edited in Adobe Illustrator without exporting a PNG.
+
+## Illustrator workflow
+
+1. Open an SVG directly from the table below.
+2. Edit the named groups and shapes. The artwork intentionally uses simple paths, rectangles, circles, strokes and fills.
+3. Keep the existing artboard/viewBox dimensions and transparent background.
+4. Save as SVG to the same filename. Illustrator's standard SVG export is suitable.
+5. Refresh the game in the browser. No JavaScript change or image export is required.
+
+Keep visible artwork close to the artboard edges on block sprites. Matter.js uses the configured rectangular width and height for collisions, so large transparent margins would make a block appear to float or collide early.
 
 ## Block sprites
 
-Place these files in `assets/images/boxes/`:
+| Editable SVG | Physics/artboard size | Purpose |
+| --- | ---: | --- |
+| `assets/images/boxes/box-01-timber-crate.svg` | 156 x 108 | Timber crate |
+| `assets/images/boxes/box-02-red-bricks.svg` | 166 x 92 | Red brick wall |
+| `assets/images/boxes/box-03-wood-beams.svg` | 190 x 74 | Stacked wood beams |
+| `assets/images/boxes/box-04-steel-beams.svg` | 188 x 70 | Stacked steel beams |
+| `assets/images/boxes/box-05-window-bricks.svg` | 158 x 116 | Brick wall with window |
+| `assets/images/boxes/box-06-cat-cargo.svg` | 164 x 102 | CAT cargo block |
 
-| File | Current physics size | Suggested source canvas |
-| --- | ---: | ---: |
-| `box-01-timber-crate.png` | 156 x 108 | 624 x 432 px |
-| `box-02-red-bricks.png` | 166 x 92 | 664 x 368 px |
-| `box-03-wood-beams.png` | 190 x 74 | 760 x 296 px |
-| `box-04-steel-beams.png` | 188 x 70 | 752 x 280 px |
-| `box-05-window-bricks.png` | 158 x 116 | 632 x 464 px |
-| `box-06-cat-cargo.png` | 164 x 102 | 656 x 408 px |
-
-The suggested canvases are 4x the physics size for crisp high-density tablet rendering. Transparent padding should be kept very small because the physics rectangle matches the configured width and height, not the visible pixels inside the PNG.
-
-Edit each entry in `GAME_CONFIG.boxes` at the top of `script.js` to change its width, height, density, friction, bounce, filename or label.
+The artboard dimensions match the physics dimensions in `GAME_CONFIG.boxes`. If you change an artboard's proportions, update that block's `width` and `height` in `script.js` as well.
 
 ## Crane hook
 
-- Path: `assets/images/crane/crane-hook.png`
-- Suggested canvas: 384 x 384 px, transparent PNG.
-- Centre the cable connection at the top middle.
-- Centre the hook pivot in the image.
-- Leave enough transparent room below the hook for its curved end.
-- The game displays it at 96 x 96 logical pixels by default.
+- Editable file: `assets/images/crane/crane-hook.svg`
+- Artboard: 384 x 384
+- Display size: 96 x 96 logical pixels
+- The cable connection is centred near the top of the artwork.
+- Keep the hook assembly centred so it remains aligned with the carried block.
+
+The moving rail and cable remain code-drawn because their length and position change continuously during play.
 
 ## Background and foreground layers
 
-Place these in `assets/images/backgrounds/`:
+| Editable SVG | Artboard | Layer behavior |
+| --- | ---: | --- |
+| `assets/images/backgrounds/midground.svg` | 2400 x 900 | Distant buildings and trees; slow parallax |
+| `assets/images/backgrounds/foreground.svg` | 2400 x 900 | Edge trees and shrubs drawn in front of the stack |
+| `assets/images/backgrounds/cloud-01.svg` | 660 x 300 | Independently drifting cloud |
+| `assets/images/backgrounds/cloud-02.svg` | 660 x 300 | Independently drifting cloud |
+| `assets/images/backgrounds/cloud-03.svg` | 660 x 300 | Independently drifting cloud |
+| `assets/images/backgrounds/bird-01.svg` | 240 x 120 | Independently animated bird |
+| `assets/images/backgrounds/bird-02.svg` | 240 x 120 | Independently animated bird |
+| `assets/images/backgrounds/bird-03.svg` | 240 x 120 | Independently animated bird |
 
-- `midground.png`: wide transparent layer for buildings, distant trees and site scenery. Suggested 2400 x 900 px.
-- `foreground.png`: wide transparent layer for objects that pass in front of the tower near ground level. Suggested 2400 x 900 px.
-- `cloud-01.png`, `cloud-02.png`, `cloud-03.png`: transparent cloud variations, around 600 x 300 px each.
-- `bird-01.png`, `bird-02.png`, `bird-03.png`: transparent bird variations, around 240 x 120 px each.
+Keep the central section of `foreground.svg` mostly open so the tower remains readable. Do not add a sky rectangle to either large layer: the game generates its changing morning, afternoon, sunset and night sky dynamically behind the SVGs.
 
-Do not bake the sky gradient into these layers. The game renders the changing morning, afternoon, sunset and night sky behind them.
+## Procedural elements intentionally retained
 
-Keep the middle of the foreground fairly open so it never hides the block landing area. Stronger foreground detail works best around the left and right edges.
+The changing sky, sun/moon, stars, crane cable, foundation and particle effects remain code-rendered. They respond to gameplay, camera height or physics and are not static sprite placeholders.
+
+## Replacing or disabling the SVG kit
+
+All paths live in `GAME_CONFIG.assets` and `GAME_CONFIG.boxes` near the top of `script.js`. Set `loadCustomSprites` to `false` to compare the SVG kit with the original Canvas fallbacks.
 
 ## Brand assets still useful
 
-- Official CAT Footwear logo in transparent PNG format.
-- Official campaign font files or font names, if available.
+- Official CAT Footwear logo artwork.
+- Official campaign font files or approved font names.
 - Approved CAT colour values and brand guidance.
-- Final privacy disclaimer and a privacy-policy URL.
-- Sound files, if you want branded audio instead of the current generated effects.
-- Any campaign dates, prize wording or leaderboard eligibility rules.
+- Final privacy disclaimer and privacy-policy URL.
+- Branded sound files.
+- Campaign dates, prize wording and leaderboard eligibility rules.
+
+The `CAT` text in the cargo starter SVG remains editable text. Before final production delivery, replace it with approved official logo vectors or convert approved lettering to outlines to avoid font substitution.
 
 ## Live tuning
 
-Open `index.html?debug=1` through the local web server to show the tuning panel. It can adjust gravity, crane speed, friction, bounce, landing stability, fall distance, camera smoothing and the day/night duration while the game runs.
+Open `index.html?debug=1` through the local web server to show the tuning panel. It can adjust gravity, crane speed, friction, bounce, landing stability, fall distance, camera smoothing and day/night duration while the game runs.
 
-Use **Copy config** in that panel to copy every current setting as JSON.
+Use **Copy config** to copy the current settings as JSON.

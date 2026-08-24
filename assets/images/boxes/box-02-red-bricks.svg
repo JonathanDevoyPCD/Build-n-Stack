@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="166" height="92" viewBox="0 0 166 92">
+  <title>Red brick starter block</title>
+  <g id="red-brick-wall">
+    <rect id="brick-base" x="2.5" y="2.5" width="161" height="87" fill="#A94C34" stroke="#2A261F" stroke-width="5"/>
+    <g id="mortar-lines" fill="none" stroke="#633126" stroke-width="3">
+      <path d="M5 24H161M5 46H161M5 68H161"/>
+      <path d="M43 5V24M123 5V24M25 24V46M83 24V46M141 24V46M43 46V68M123 46V68M25 68V87M83 68V87M141 68V87"/>
+    </g>
+    <g id="brick-highlights" fill="none" stroke="#D57A5A" stroke-linecap="round" stroke-width="2" opacity=".55">
+      <path d="M10 9H34M50 30H72M91 52H114M129 75H153"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="156" height="108" viewBox="0 0 156 108">
+  <title>Timber crate starter block</title>
+  <g id="timber-crate">
+    <rect id="crate-base" x="2.5" y="2.5" width="151" height="103" fill="#C88B3A" stroke="#2A261F" stroke-width="5"/>
+    <g id="timber-planks" fill="none" stroke="#9B672B" stroke-width="3">
+      <path d="M7 27H149M7 54H149M7 81H149"/>
+      <path d="M38 7V101M118 7V101" opacity=".55"/>
+    </g>
+    <rect id="inner-frame" x="10" y="10" width="136" height="88" fill="none" stroke="#68451E" stroke-width="8"/>
+    <g id="cross-braces" fill="none" stroke="#68451E" stroke-linecap="square" stroke-width="9">
+      <path d="M16 16L140 92M140 16L16 92"/>
+    </g>
+    <g id="nails" fill="#2A261F">
+      <circle cx="14" cy="14" r="2.5"/><circle cx="142" cy="14" r="2.5"/>
+      <circle cx="14" cy="94" r="2.5"/><circle cx="142" cy="94" r="2.5"/>
+    </g>
+  </g>
+</svg>

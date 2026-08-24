@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="120" viewBox="0 0 240 120">
+  <title>Flapping bird starter sprite</title>
+  <g id="bird-03" fill="none" stroke="#173D52" stroke-linecap="round" stroke-linejoin="round" stroke-width="13">
+    <path d="M18 84C54 79 85 54 120 28"/>
+    <path d="M120 28C155 54 186 79 222 84"/>
+  </g>
+</svg>

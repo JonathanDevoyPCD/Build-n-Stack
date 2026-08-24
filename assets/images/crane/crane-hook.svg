@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" viewBox="0 0 384 384">
+  <title>Construction crane hook starter sprite</title>
+  <defs>
+    <pattern id="hazard-stripes" width="72" height="72" patternUnits="userSpaceOnUse" patternTransform="rotate(38)">
+      <rect width="36" height="72" fill="#F2B705"/>
+      <rect x="36" width="36" height="72" fill="#171A1C"/>
+    </pattern>
+    <linearGradient id="hook-steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#AEB8BD"/>
+      <stop offset=".5" stop-color="#566168"/>
+      <stop offset="1" stop-color="#31393D"/>
+    </linearGradient>
+  </defs>
+  <g id="crane-hook">
+    <g id="cable-connector">
+      <rect x="176" y="18" width="32" height="46" rx="8" fill="#454E53"/>
+      <circle cx="192" cy="57" r="14" fill="#727D83" stroke="#262C2F" stroke-width="8"/>
+    </g>
+    <g id="hazard-housing">
+      <rect x="68" y="58" width="248" height="120" rx="8" fill="url(#hazard-stripes)" stroke="#171A1C" stroke-width="12"/>
+      <path d="M81 163H303" fill="none" stroke="#FFFFFF" stroke-width="5" opacity=".2"/>
+      <g fill="#B9C0C4" stroke="#252A2D" stroke-width="5">
+        <circle cx="91" cy="81" r="10"/><circle cx="293" cy="81" r="10"/>
+        <circle cx="91" cy="155" r="10"/><circle cx="293" cy="155" r="10"/>
+      </g>
+    </g>
+    <g id="hook-assembly">
+      <rect x="174" y="174" width="36" height="48" rx="14" fill="url(#hook-steel)" stroke="#30373B" stroke-width="8"/>
+      <path d="M192 210V247C192 309 258 334 297 291C316 270 317 241 306 219" fill="none" stroke="#30373B" stroke-linecap="round" stroke-width="48"/>
+      <path d="M192 210V247C192 295 242 314 274 283C288 270 291 251 286 235" fill="none" stroke="url(#hook-steel)" stroke-linecap="round" stroke-width="30"/>
+      <path d="M286 235L315 216" fill="none" stroke="#30373B" stroke-linecap="round" stroke-width="18"/>
+    </g>
+  </g>
+</svg>

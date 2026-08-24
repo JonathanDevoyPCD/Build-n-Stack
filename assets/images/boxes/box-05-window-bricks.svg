@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="158" height="116" viewBox="0 0 158 116">
+  <title>Brick wall with window starter block</title>
+  <g id="window-brick-wall">
+    <rect id="wall-base" x="2.5" y="2.5" width="153" height="111" fill="#B3613F" stroke="#2A261F" stroke-width="5"/>
+    <g id="mortar-lines" fill="none" stroke="#67372A" stroke-width="3">
+      <path d="M5 29H153M5 57H153M5 85H153"/>
+      <path d="M40 5V29M118 5V29M22 29V57M79 29V57M136 29V57M40 57V85M118 57V85M22 85V111M79 85V111M136 85V111"/>
+    </g>
+    <g id="window">
+      <rect x="48" y="20" width="62" height="78" fill="#263034" stroke="#252829" stroke-width="7"/>
+      <rect x="54" y="26" width="50" height="66" fill="#9ED2E6"/>
+      <path d="M79 26V92M54 59H104" fill="none" stroke="#35464E" stroke-width="5"/>
+      <path d="M58 30L75 30L58 50Z" fill="#E7F8FF" opacity=".58"/>
+    </g>
+  </g>
+</svg>

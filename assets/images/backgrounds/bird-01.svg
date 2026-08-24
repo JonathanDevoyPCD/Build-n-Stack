@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="120" viewBox="0 0 240 120">
+  <title>Soaring bird starter sprite</title>
+  <g id="bird-01" fill="none" stroke="#173D52" stroke-linecap="round" stroke-width="14">
+    <path d="M18 76C52 35 88 37 120 69"/>
+    <path d="M120 69C152 37 188 35 222 76"/>
+  </g>
+</svg>

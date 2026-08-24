@@ -1,9 +1,11 @@
-# Image folders
+# Editable game artwork
 
-Add the supplied game artwork under these folders:
+All artwork in this folder is SVG and can be opened directly in Adobe Illustrator:
 
-- `boxes/` for the six block sprites
-- `crane/` for `crane-hook.png`
-- `backgrounds/` for the foreground, midground, clouds and birds
+- `boxes/` — six editable block sprites
+- `crane/` — editable crane-hook sprite
+- `backgrounds/` — editable foreground, mid-ground, clouds and birds
 
-See `../../ASSET-GUIDE.md` for filenames, dimensions and transparency guidance.
+The game loads these files directly. Save edits back to the same SVG filename and refresh the browser; no PNG export is required.
+
+See `../../ASSET-GUIDE.md` for dimensions, physics alignment and Illustrator guidance.

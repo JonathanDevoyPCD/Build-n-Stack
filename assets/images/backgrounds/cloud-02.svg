@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="300" viewBox="0 0 660 300">
+  <title>Long cloud starter sprite</title>
+  <g id="cloud-02" fill="#FFFFFF" opacity=".78">
+    <ellipse cx="330" cy="218" rx="300" ry="58"/>
+    <ellipse cx="162" cy="188" rx="94" ry="73"/>
+    <ellipse cx="272" cy="155" rx="118" ry="99"/>
+    <ellipse cx="406" cy="122" rx="132" ry="111"/>
+    <ellipse cx="520" cy="185" rx="91" ry="71"/>
+  </g>
+</svg>

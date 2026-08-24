@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="300" viewBox="0 0 660 300">
+  <title>Small clustered cloud starter sprite</title>
+  <g id="cloud-03" fill="#FFFFFF" opacity=".8">
+    <ellipse cx="330" cy="216" rx="268" ry="61"/>
+    <ellipse cx="225" cy="177" rx="119" ry="93"/>
+    <ellipse cx="365" cy="142" rx="115" ry="118"/>
+    <ellipse cx="470" cy="190" rx="86" ry="72"/>
+  </g>
+</svg>

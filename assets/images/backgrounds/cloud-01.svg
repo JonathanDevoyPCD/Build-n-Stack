@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="300" viewBox="0 0 660 300">
+  <title>Rounded cloud starter sprite</title>
+  <g id="cloud-01" fill="#FFFFFF" opacity=".82">
+    <ellipse cx="330" cy="205" rx="285" ry="68"/>
+    <ellipse cx="205" cy="170" rx="108" ry="92"/>
+    <ellipse cx="340" cy="121" rx="142" ry="120"/>
+    <ellipse cx="475" cy="177" rx="116" ry="88"/>
+  </g>
+</svg>

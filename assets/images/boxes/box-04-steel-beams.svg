@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="188" height="70" viewBox="0 0 188 70">
+  <title>Steel beams starter block</title>
+  <g id="steel-beam-stack">
+    <rect id="steel-base" x="2.5" y="2.5" width="183" height="65" fill="#657178" stroke="#252B2E" stroke-width="5"/>
+    <g id="i-beams">
+      <path d="M8 9H180V17H105V26H180V34H8V26H83V17H8Z" fill="#BBC4C8"/>
+      <path d="M8 38H180V46H105V55H180V63H8V55H83V46H8Z" fill="#909BA0"/>
+    </g>
+    <g id="steel-shadows" fill="#414A4F" opacity=".72">
+      <rect x="8" y="17" width="75" height="4"/><rect x="105" y="17" width="75" height="4"/>
+      <rect x="8" y="46" width="75" height="4"/><rect x="105" y="46" width="75" height="4"/>
+    </g>
+    <g id="rivets" fill="#E2E6E8">
+      <circle cx="15" cy="13" r="2"/><circle cx="173" cy="13" r="2"/>
+      <circle cx="15" cy="42" r="2"/><circle cx="173" cy="42" r="2"/>
+    </g>
+  </g>
+</svg>

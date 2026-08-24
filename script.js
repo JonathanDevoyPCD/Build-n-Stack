@@ -114,33 +114,33 @@ const GAME_CONFIG = {
     },
 
     assets: {
-        loadCustomSprites: false, // Set true after adding your PNG files to the documented paths.
-        hook: "./assets/images/crane/crane-hook.png",
-        foreground: "./assets/images/backgrounds/foreground.png",
-        midground: "./assets/images/backgrounds/midground.png",
+        loadCustomSprites: true, // Loads the editable SVG starter kit from assets/images/.
+        hook: "./assets/images/crane/crane-hook.svg",
+        foreground: "./assets/images/backgrounds/foreground.svg",
+        midground: "./assets/images/backgrounds/midground.svg",
         clouds: [
-            "./assets/images/backgrounds/cloud-01.png",
-            "./assets/images/backgrounds/cloud-02.png",
-            "./assets/images/backgrounds/cloud-03.png"
+            "./assets/images/backgrounds/cloud-01.svg",
+            "./assets/images/backgrounds/cloud-02.svg",
+            "./assets/images/backgrounds/cloud-03.svg"
         ],
         birds: [
-            "./assets/images/backgrounds/bird-01.png",
-            "./assets/images/backgrounds/bird-02.png",
-            "./assets/images/backgrounds/bird-03.png"
+            "./assets/images/backgrounds/bird-01.svg",
+            "./assets/images/backgrounds/bird-02.svg",
+            "./assets/images/backgrounds/bird-03.svg"
         ]
     },
 
     /*
-     * Replace the six PNG files below with transparent sprites. Physics width,
+     * Open the six SVG files below directly in Illustrator. Physics width,
      * height and material values can be tuned separately for every variation.
      */
     boxes: [
-        { id: "timber-crate", label: "Timber Crate", texture: "./assets/images/boxes/box-01-timber-crate.png", width: 156, height: 108, density: 0.0023, color: "#c88b3a", pattern: "crate" },
-        { id: "red-bricks", label: "Red Bricks", texture: "./assets/images/boxes/box-02-red-bricks.png", width: 166, height: 92, density: 0.0032, color: "#a94c34", pattern: "bricks" },
-        { id: "wood-beams", label: "Wood Beams", texture: "./assets/images/boxes/box-03-wood-beams.png", width: 190, height: 74, density: 0.0024, color: "#b77a35", pattern: "wood" },
-        { id: "steel-beams", label: "Steel Beams", texture: "./assets/images/boxes/box-04-steel-beams.png", width: 188, height: 70, density: 0.0038, color: "#657178", pattern: "steel" },
-        { id: "window-bricks", label: "Bricks with Window", texture: "./assets/images/boxes/box-05-window-bricks.png", width: 158, height: 116, density: 0.003, color: "#b3613f", pattern: "window" },
-        { id: "cat-cargo", label: "CAT Cargo", texture: "./assets/images/boxes/box-06-cat-cargo.png", width: 164, height: 102, density: 0.0028, color: "#e3a900", pattern: "cargo" }
+        { id: "timber-crate", label: "Timber Crate", texture: "./assets/images/boxes/box-01-timber-crate.svg", width: 156, height: 108, density: 0.0023, color: "#c88b3a", pattern: "crate" },
+        { id: "red-bricks", label: "Red Bricks", texture: "./assets/images/boxes/box-02-red-bricks.svg", width: 166, height: 92, density: 0.0032, color: "#a94c34", pattern: "bricks" },
+        { id: "wood-beams", label: "Wood Beams", texture: "./assets/images/boxes/box-03-wood-beams.svg", width: 190, height: 74, density: 0.0024, color: "#b77a35", pattern: "wood" },
+        { id: "steel-beams", label: "Steel Beams", texture: "./assets/images/boxes/box-04-steel-beams.svg", width: 188, height: 70, density: 0.0038, color: "#657178", pattern: "steel" },
+        { id: "window-bricks", label: "Bricks with Window", texture: "./assets/images/boxes/box-05-window-bricks.svg", width: 158, height: 116, density: 0.003, color: "#b3613f", pattern: "window" },
+        { id: "cat-cargo", label: "CAT Cargo", texture: "./assets/images/boxes/box-06-cat-cargo.svg", width: 164, height: 102, density: 0.0028, color: "#e3a900", pattern: "cargo" }
     ],
 
     debug: {
@@ -344,16 +344,12 @@ class StackGame {
         }
 
         sources.forEach((source) => {
+            const image = new Image();
             this.assets.set(source, null);
-            fetch(source, { method: "HEAD", cache: "no-store" })
-                .then((response) => {
-                    if (!response.ok) return;
-                    const image = new Image();
-                    image.onload = () => this.assets.set(source, image);
-                    image.onerror = () => this.assets.set(source, null);
-                    image.src = source;
-                })
-                .catch(() => {});
+            image.decoding = "async";
+            image.onload = () => this.assets.set(source, image);
+            image.onerror = () => this.assets.set(source, null);
+            image.src = source;
         });
     }
 
@@ -767,26 +763,25 @@ class StackGame {
             const width = Math.max(this.view.width, 900);
             const height = width / ratio;
             ctx.drawImage(image, (this.view.width - width) / 2, parallaxY - height, width, height);
-            return;
-        }
-
-        ctx.save();
-        ctx.globalAlpha = 0.2;
-        ctx.fillStyle = "#154d73";
-        const base = parallaxY;
-        const widths = [95, 150, 80, 125, 190, 88, 145, 110];
-        let x = -20;
-        widths.forEach((width, index) => {
-            const height = 110 + ((index * 73) % 180);
-            ctx.fillRect(x, base - height, width, height);
-            ctx.fillStyle = "rgba(255,255,255,0.38)";
-            for (let wy = base - height + 24; wy < base - 18; wy += 34) {
-                for (let wx = x + 18; wx < x + width - 12; wx += 27) ctx.fillRect(wx, wy, 11, 16);
-            }
+        } else {
+            ctx.save();
+            ctx.globalAlpha = 0.2;
             ctx.fillStyle = "#154d73";
-            x += width + 18;
-        });
-        ctx.restore();
+            const base = parallaxY;
+            const widths = [95, 150, 80, 125, 190, 88, 145, 110];
+            let x = -20;
+            widths.forEach((width, index) => {
+                const height = 110 + ((index * 73) % 180);
+                ctx.fillRect(x, base - height, width, height);
+                ctx.fillStyle = "rgba(255,255,255,0.38)";
+                for (let wy = base - height + 24; wy < base - 18; wy += 34) {
+                    for (let wx = x + 18; wx < x + width - 12; wx += 27) ctx.fillRect(wx, wy, 11, 16);
+                }
+                ctx.fillStyle = "#154d73";
+                x += width + 18;
+            });
+            ctx.restore();
+        }
 
         this.drawBirds(ctx, parallaxY);
     }

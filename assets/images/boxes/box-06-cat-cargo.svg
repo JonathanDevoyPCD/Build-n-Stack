@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="164" height="102" viewBox="0 0 164 102">
+  <title>CAT cargo starter block</title>
+  <g id="cat-cargo">
+    <rect id="cargo-base" x="2.5" y="2.5" width="159" height="97" fill="#E3A900" stroke="#171A1C" stroke-width="5"/>
+    <path id="cargo-panels" d="M20 6V96M144 6V96M25 18H139M25 84H139" fill="none" stroke="#8B6906" stroke-width="4"/>
+    <g id="corner-stripes" fill="#171A1C">
+      <path d="M6 8H17L6 22ZM6 31L20 17V30L6 44ZM158 8H147L158 22ZM158 31L144 17V30L158 44Z"/>
+    </g>
+    <g id="cat-mark">
+      <rect x="47" y="29" width="70" height="45" fill="#171A1C"/>
+      <text x="82" y="60" fill="#FFFFFF" font-family="Arial Black, Arial, sans-serif" font-size="27" font-weight="900" text-anchor="middle">CAT</text>
+      <path d="M71 68H93L82 52Z" fill="#F2B705"/>
+    </g>
+    <g id="rivets" fill="#171A1C">
+      <circle cx="12" cy="12" r="2.5"/><circle cx="152" cy="12" r="2.5"/>
+      <circle cx="12" cy="90" r="2.5"/><circle cx="152" cy="90" r="2.5"/>
+    </g>
+  </g>
+</svg>

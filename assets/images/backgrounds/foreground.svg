@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="900" viewBox="0 0 2400 900">
+  <title>Construction site foreground starter layer</title>
+  <g id="left-tree">
+    <path d="M190 648V393" fill="none" stroke="#694B2C" stroke-width="58"/>
+    <g fill="#43582E">
+      <circle cx="190" cy="310" r="122"/><circle cx="100" cy="363" r="94"/><circle cx="282" cy="363" r="99"/>
+      <circle cx="122" cy="271" r="84"/><circle cx="264" cy="270" r="87"/>
+    </g>
+    <g fill="#587233" opacity=".9"><circle cx="145" cy="270" r="72"/><circle cx="230" cy="324" r="86"/></g>
+  </g>
+  <g id="right-tree">
+    <path d="M2210 650V430" fill="none" stroke="#694B2C" stroke-width="54"/>
+    <g fill="#43582E">
+      <circle cx="2210" cy="348" r="114"/><circle cx="2125" cy="391" r="88"/><circle cx="2293" cy="392" r="93"/>
+      <circle cx="2160" cy="310" r="77"/><circle cx="2268" cy="306" r="79"/>
+    </g>
+    <g fill="#587233" opacity=".9"><circle cx="2176" cy="329" r="67"/><circle cx="2250" cy="369" r="79"/></g>
+  </g>
+  <g id="left-shrubs">
+    <path d="M0 659C34 602 94 599 130 647C164 580 239 578 278 644C317 595 385 597 417 651C457 582 535 587 568 647C609 600 681 605 721 659V900H0Z" fill="#35462C"/>
+    <path d="M0 686C70 637 126 655 170 691C235 625 312 641 351 690C424 631 505 646 552 693C612 646 686 652 770 700V900H0Z" fill="#4B612E" opacity=".88"/>
+  </g>
+  <g id="right-shrubs">
+    <path d="M1630 663C1676 600 1745 603 1780 653C1820 587 1895 588 1934 648C1977 591 2048 596 2085 650C2127 582 2204 587 2237 646C2282 596 2343 604 2400 653V900H1630Z" fill="#35462C"/>
+    <path d="M1576 702C1660 649 1728 651 1778 696C1834 635 1912 644 1952 692C2021 638 2102 648 2144 693C2213 640 2300 652 2400 696V900H1576Z" fill="#4B612E" opacity=".88"/>
+  </g>
+  <g id="edge-grasses" fill="none" stroke="#78913F" stroke-linecap="round" stroke-width="12">
+    <path d="M650 673L620 605M666 670L680 594M702 678L746 620M1714 674L1678 610M1741 670L1753 595M1770 678L1818 617"/>
+  </g>
+  <g id="site-markers">
+    <path d="M520 654V543M1880 656V545" fill="none" stroke="#D6D1BC" stroke-width="18"/>
+    <path d="M478 552H563L542 514H499ZM1838 554H1923L1902 516H1859Z" fill="#F2B705" stroke="#171A1C" stroke-width="8"/>
+  </g>
+</svg>
