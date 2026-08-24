@@ -18,8 +18,10 @@
             </div>
 
             <div class="hero-copy">
-                <p class="eyebrow">High-rise stacking session</p>
-                <h1 id="gameTitle">BUILD<br><span>N' STACK</span></h1>
+                <!-- <p class="eyebrow">High-rise stacking session</p> -->
+                <h1 id="gameTitle">
+                    <img class="hero-logo" src="./assets/images/logo/BNS-LOGO.svg" alt="Build n' Stack">
+                </h1>
                 <p class="hero-tagline">Build it straight. Stack it high. Don't let anything fall.</p>
             </div>
 
@@ -42,7 +44,7 @@
         <section id="formScreen" class="screen form-screen" aria-labelledby="formTitle" hidden>
             <div class="panel panel-form">
                 <button class="text-back" data-action="menu" type="button" aria-label="Back to main menu">← Back</button>
-                <p class="eyebrow">Site induction</p>
+                <!-- <p class="eyebrow">Site induction</p> -->
                 <h2 id="formTitle">Clock in to play</h2>
                 <p class="panel-intro">Enter your details, then stack as high as you can.</p>
 
@@ -85,7 +87,9 @@
                     <span class="hud-label">Height</span>
                     <strong id="scoreValue">0</strong>
                 </div>
-                <div class="hud-brand" aria-hidden="true">BUILD N' STACK</div>
+                <div class="hud-brand" aria-hidden="true">
+                    <img src="./assets/images/logo/BNS-LOGO.svg" alt="">
+                </div>
                 <div class="hud-actions">
                     <button id="soundButton" class="icon-button" type="button" aria-label="Mute sound">SOUND ON</button>
                     <button id="quitButton" class="icon-button" type="button">QUIT</button>
@@ -100,7 +104,7 @@
         <section id="leaderboardScreen" class="screen leaderboard-screen" aria-labelledby="leaderboardTitle" hidden>
             <div class="panel leaderboard-panel">
                 <button class="text-back" data-action="menu" type="button" aria-label="Back to main menu">← Back</button>
-                <p class="eyebrow">Top of the site</p>
+                <!-- <p class="eyebrow">Top of the site</p> -->
                 <h2 id="leaderboardTitle">Leaderboard</h2>
                 <div class="leaderboard-head" aria-hidden="true">
                     <span>Rank / player</span>
@@ -114,7 +118,7 @@
 
         <section id="gameOverScreen" class="screen overlay-screen" aria-labelledby="gameOverTitle" hidden>
             <div class="panel game-over-panel">
-                <p class="eyebrow">Structure failed</p>
+                <!-- <p class="eyebrow">Structure failed</p> -->
                 <h2 id="gameOverTitle">Game over</h2>
                 <p id="gameOverReason" class="game-over-reason">A block fell from the stack.</p>
 
@@ -132,7 +136,7 @@
 
     <dialog id="passwordDialog" class="password-dialog">
         <form method="dialog" id="passwordForm">
-            <p class="eyebrow">Restricted action</p>
+            <!-- <p class="eyebrow">Restricted action</p> -->
             <h2>Site supervisor access</h2>
             <p>Enter the administrator password to clear this device's leaderboard.</p>
             <input type="hidden" name="username" value="site-supervisor" autocomplete="username">
