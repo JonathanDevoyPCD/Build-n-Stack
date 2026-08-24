@@ -62,7 +62,11 @@ button { touch-action: manipulation; }
 .screen[hidden] { display: none !important; }
 .menu-screen,
 .form-screen,
-.leaderboard-screen { overflow-y: auto; overscroll-behavior: contain; }
+.leaderboard-screen {
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
 
 .menu-screen {
     display: flex;
@@ -78,7 +82,7 @@ button { touch-action: manipulation; }
 .menu-screen::after {
     position: absolute;
     z-index: -1;
-    inset: auto -8vw 0;
+    inset: auto 0 0;
     height: 27%;
     content: "";
     background:
