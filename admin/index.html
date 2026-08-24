@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#101214">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Build n' Stack | Admin</title>
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Z5v8AAAAASUVORK5CYII=">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="./admin.css">
+</head>
+<body class="admin-body">
+    <main class="admin-shell">
+        <header class="admin-header">
+            <div>
+                <p class="eyebrow">CAT Footwear promotion</p>
+                <h1>Build n' Stack Admin</h1>
+            </div>
+            <a class="admin-game-link" href="../index.html">Open game</a>
+        </header>
+
+        <section id="loginPanel" class="admin-login panel" aria-labelledby="loginTitle">
+            <p class="eyebrow">Restricted access</p>
+            <h2 id="loginTitle">Supervisor sign-in</h2>
+            <p>Enter the local administrator password to view and export player submissions saved on this device.</p>
+            <form id="adminLoginForm">
+                <input type="hidden" name="username" value="site-supervisor" autocomplete="username">
+                <label class="field">
+                    <span>Password</span>
+                    <input id="adminPassword" type="password" autocomplete="current-password" required autofocus>
+                </label>
+                <p id="adminLoginError" class="dialog-error" aria-live="polite"></p>
+                <button class="button button-primary button-large button-full" type="submit">Open Admin</button>
+            </form>
+            <p class="admin-security-note"><strong>Prototype notice:</strong> MEDICUS is a convenience lock in browser code, not production security. The Supabase version will use authenticated administrator accounts and Row Level Security before private data is exposed.</p>
+        </section>
+
+        <section id="adminDashboard" class="admin-dashboard" hidden aria-labelledby="dashboardTitle">
+            <div class="admin-summary">
+                <div><span>Total attempts</span><strong id="totalAttempts">0</strong></div>
+                <div><span>Unique players</span><strong id="uniquePlayers">0</strong></div>
+                <div><span>Highest score</span><strong id="highestScore">0</strong></div>
+                <div><span>Pending sync</span><strong id="pendingSync">0</strong></div>
+            </div>
+
+            <div class="admin-toolbar">
+                <div>
+                    <p class="eyebrow">Player submissions</p>
+                    <h2 id="dashboardTitle">Local results</h2>
+                </div>
+                <div class="admin-actions">
+                    <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+                    <button id="exportButton" class="button button-primary" type="button">Export CSV</button>
+                    <button id="clearDataButton" class="button admin-danger" type="button">Clear data</button>
+                </div>
+            </div>
+
+            <p class="admin-data-source">Showing LocalStorage data from this browser only. Supabase synchronization is intentionally not active yet.</p>
+
+            <div class="admin-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Completed</th>
+                            <th>Name</th>
+                            <th>Contact number</th>
+                            <th>Email</th>
+                            <th>Score</th>
+                            <th>Duration</th>
+                            <th>Sync</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody"></tbody>
+                </table>
+                <p id="adminEmpty" class="empty-state">No player submissions are stored on this device.</p>
+            </div>
+        </section>
+    </main>
+
+    <dialog id="clearDataDialog" class="password-dialog">
+        <form method="dialog" id="clearDataForm">
+            <p class="eyebrow">Permanent local action</p>
+            <h2>Clear all player data?</h2>
+            <p>This removes every locally stored submission on this device. Export the CSV first if you need a backup.</p>
+            <label class="field">
+                <span>Type CLEAR to confirm</span>
+                <input id="clearConfirmation" type="text" autocomplete="off">
+            </label>
+            <p id="clearDataError" class="dialog-error" aria-live="polite"></p>
+            <div class="dialog-actions">
+                <button class="button button-secondary" value="cancel" type="submit">Cancel</button>
+                <button id="confirmClearDataButton" class="button admin-danger" value="default" type="button">Clear Everything</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script src="./admin.js"></script>
+</body>
+</html>

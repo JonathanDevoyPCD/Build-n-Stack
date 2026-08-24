@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f2b705">
+    <meta name="description" content="Build n' Stack, a CAT Footwear endless construction stacking game.">
+    <title>Build n' Stack | CAT Footwear</title>
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Z5v8AAAAASUVORK5CYII=">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <main id="app" class="app-shell">
+        <section id="menuScreen" class="screen menu-screen is-active" aria-labelledby="gameTitle">
+            <div class="brand-lockup" aria-label="CAT Footwear promotional game">
+                <span class="brand-tab">CAT FOOTWEAR</span>
+                <span class="brand-rule" aria-hidden="true"></span>
+            </div>
+
+            <div class="hero-copy">
+                <p class="eyebrow">High-rise stacking session</p>
+                <h1 id="gameTitle">BUILD<br><span>N' STACK</span></h1>
+                <p class="hero-tagline">Build it straight. Stack it high. Don't let anything fall.</p>
+            </div>
+
+            <div class="menu-actions">
+                <button id="beginButton" class="button button-primary button-large" type="button">
+                    <span>Begin Session</span>
+                    <span class="button-mark" aria-hidden="true">+</span>
+                </button>
+                <button id="menuLeaderboardButton" class="button button-secondary" type="button">Leaderboard</button>
+            </div>
+
+            <div class="site-silhouette" aria-hidden="true">
+                <span class="building building-a"></span>
+                <span class="building building-b"></span>
+                <span class="building building-c"></span>
+                <span class="ground-line"></span>
+            </div>
+        </section>
+
+        <section id="formScreen" class="screen form-screen" aria-labelledby="formTitle" hidden>
+            <div class="panel panel-form">
+                <button class="text-back" data-action="menu" type="button" aria-label="Back to main menu">← Back</button>
+                <p class="eyebrow">Site induction</p>
+                <h2 id="formTitle">Clock in to play</h2>
+                <p class="panel-intro">Enter your details, then stack as high as you can.</p>
+
+                <form id="playerForm" novalidate>
+                    <label class="field">
+                        <span>Name</span>
+                        <input id="playerName" name="name" type="text" autocomplete="name" maxlength="60" required placeholder="Your name">
+                        <small class="field-error" data-error-for="name"></small>
+                    </label>
+
+                    <label class="field">
+                        <span>Contact number</span>
+                        <input id="playerPhone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="24" required placeholder="e.g. 082 123 4567">
+                        <small class="field-error" data-error-for="phone"></small>
+                    </label>
+
+                    <label class="field">
+                        <span>Email address</span>
+                        <input id="playerEmail" name="email" type="email" autocomplete="email" maxlength="120" required placeholder="you@example.com">
+                        <small class="field-error" data-error-for="email"></small>
+                    </label>
+
+                    <label class="consent-row">
+                        <input id="playerConsent" name="consent" type="checkbox" required>
+                        <span>I agree to the collection and use of my details for this promotional experience.</span>
+                    </label>
+                    <small class="field-error consent-error" data-error-for="consent"></small>
+
+                    <button class="button button-primary button-large button-full" type="submit">Start Game</button>
+                    <p class="disclaimer">By starting the game, you consent to CAT Footwear and its appointed promotional partners storing the details supplied above, your score and the date of play for campaign administration and promotional communication. Final privacy wording and policy link must be approved before public launch.</p>
+                </form>
+            </div>
+        </section>
+
+        <section id="gameScreen" class="screen game-screen" aria-label="Build n' Stack game" hidden>
+            <canvas id="gameCanvas" aria-label="Stack the moving construction blocks by tapping to release them"></canvas>
+
+            <header class="game-hud">
+                <div class="score-card">
+                    <span class="hud-label">Height</span>
+                    <strong id="scoreValue">0</strong>
+                </div>
+                <div class="hud-brand" aria-hidden="true">BUILD N' STACK</div>
+                <div class="hud-actions">
+                    <button id="soundButton" class="icon-button" type="button" aria-label="Mute sound">SOUND ON</button>
+                    <button id="quitButton" class="icon-button" type="button">QUIT</button>
+                </div>
+            </header>
+
+            <div id="gamePrompt" class="game-prompt">Tap or press Space to drop</div>
+            <div id="placementMessage" class="placement-message" aria-live="polite"></div>
+            <aside id="debugPanel" class="debug-panel" hidden aria-label="Live game tuning controls"></aside>
+        </section>
+
+        <section id="leaderboardScreen" class="screen leaderboard-screen" aria-labelledby="leaderboardTitle" hidden>
+            <div class="panel leaderboard-panel">
+                <button class="text-back" data-action="menu" type="button" aria-label="Back to main menu">← Back</button>
+                <p class="eyebrow">Top of the site</p>
+                <h2 id="leaderboardTitle">Leaderboard</h2>
+                <div class="leaderboard-head" aria-hidden="true">
+                    <span>Rank / player</span>
+                    <span>Score</span>
+                </div>
+                <ol id="leaderboardList" class="leaderboard-list"></ol>
+                <p id="leaderboardEmpty" class="empty-state">No scores yet. Be the first to build.</p>
+                <button id="clearLeaderboardButton" class="clear-link" type="button">Clear leaderboard</button>
+            </div>
+        </section>
+
+        <section id="gameOverScreen" class="screen overlay-screen" aria-labelledby="gameOverTitle" hidden>
+            <div class="panel game-over-panel">
+                <p class="eyebrow">Structure failed</p>
+                <h2 id="gameOverTitle">Game over</h2>
+                <p id="gameOverReason" class="game-over-reason">A block fell from the stack.</p>
+
+                <div class="result-grid">
+                    <div><span>Score</span><strong id="finalScore">0</strong></div>
+                    <div><span>Best</span><strong id="bestScore">0</strong></div>
+                </div>
+
+                <button id="playAgainButton" class="button button-primary button-large button-full" type="button">Build Again</button>
+                <button id="gameOverLeaderboardButton" class="button button-secondary button-full" type="button">Leaderboard</button>
+                <button class="text-link" data-action="menu" type="button">Return to menu</button>
+            </div>
+        </section>
+    </main>
+
+    <dialog id="passwordDialog" class="password-dialog">
+        <form method="dialog" id="passwordForm">
+            <p class="eyebrow">Restricted action</p>
+            <h2>Site supervisor access</h2>
+            <p>Enter the administrator password to clear this device's leaderboard.</p>
+            <input type="hidden" name="username" value="site-supervisor" autocomplete="username">
+            <label class="field">
+                <span>Password</span>
+                <input id="clearPassword" type="password" autocomplete="current-password" required>
+            </label>
+            <p id="passwordError" class="dialog-error" aria-live="polite"></p>
+            <div class="dialog-actions">
+                <button class="button button-secondary" value="cancel" type="submit">Cancel</button>
+                <button id="confirmClearButton" class="button button-primary" value="default" type="button">Clear Scores</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script src="./assets/vendor/matter.min.js"></script>
+    <script src="./script.js"></script>
+</body>
+</html>
