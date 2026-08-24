@@ -35,7 +35,9 @@ const GAME_CONFIG = {
         speedIncreasePerBox: 3.5,  // Extra hook speed for each safely placed box.
         travelMargin: 115,         // Distance kept clear from each side of the visible world.
         dropGap: 500,              // Vertical space from tower top to crane hook.
-        blockHangDistance: 82,     // Distance between hook pivot and the centre of the block.
+        hookSpriteSize: 96,        // Display width/height of crane-hook.svg in logical pixels.
+        hookContactOffset: 35,     // Hook pivot to its visible bottom edge; tune after editing the SVG.
+        hookBoxOverlap: 8,         // Pixels of hook hidden behind the attached box so no gap is visible.
         inheritHorizontalSpeed: false, // False makes blocks fall straight down as requested.
         inheritedSpeedFactor: 0.28,
         spawnDelayMs: 650,         // Pause after a successful landing before the next block.
@@ -431,7 +433,7 @@ class StackGame {
         this.hookY = this.getTowerTop() - GAME_CONFIG.crane.dropGap;
         const body = Bodies.rectangle(
             this.hookX,
-            this.hookY + GAME_CONFIG.crane.blockHangDistance,
+            this.getAttachedBlockY(variant),
             variant.width,
             variant.height,
             {
@@ -462,6 +464,13 @@ class StackGame {
         this.phase = "ready";
         this.settleTimer = 0;
         this.callbacks.onReady?.();
+    }
+
+    getAttachedBlockY(variant) {
+        return this.hookY
+            + GAME_CONFIG.crane.hookContactOffset
+            + variant.height / 2
+            - GAME_CONFIG.crane.hookBoxOverlap;
     }
 
     pickVariant() {
@@ -533,7 +542,8 @@ class StackGame {
                 this.hookX = -halfTravel;
                 this.hookDirection = 1;
             }
-            Body.setPosition(this.currentBlock, { x: this.hookX, y: this.hookY + GAME_CONFIG.crane.blockHangDistance });
+            const variant = this.currentBlock.plugin.stackData.variant;
+            Body.setPosition(this.currentBlock, { x: this.hookX, y: this.getAttachedBlockY(variant) });
             Body.setVelocity(this.currentBlock, { x: 0, y: 0 });
             Matter.Sleeping.set(this.currentBlock, true);
         }
@@ -675,8 +685,8 @@ class StackGame {
         this.drawClouds(ctx);
         this.drawMidground(ctx);
         this.drawFoundation(ctx);
-        this.drawBlocks(ctx);
         this.drawCrane(ctx);
+        this.drawBlocks(ctx);
         this.drawParticles(ctx);
         this.drawForeground(ctx);
         if (GAME_CONFIG.debug.showBodies) this.drawPhysicsOutlines(ctx);
@@ -922,17 +932,19 @@ class StackGame {
         ctx.beginPath(); ctx.moveTo(hookPoint.x + sway, railY); ctx.lineTo(hookPoint.x, hookPoint.y - 34); ctx.stroke();
 
         const image = this.assets.get(GAME_CONFIG.assets.hook);
+        const spriteSize = GAME_CONFIG.crane.hookSpriteSize;
         if (image) {
-            ctx.drawImage(image, hookPoint.x - 48, hookPoint.y - 48, 96, 96);
+            ctx.drawImage(image, hookPoint.x - spriteSize / 2, hookPoint.y - spriteSize / 2, spriteSize, spriteSize);
         } else {
-            this.drawFallbackHook(ctx, hookPoint.x, hookPoint.y);
+            this.drawFallbackHook(ctx, hookPoint.x, hookPoint.y, spriteSize);
         }
         ctx.restore();
     }
 
-    drawFallbackHook(ctx, x, y) {
+    drawFallbackHook(ctx, x, y, spriteSize) {
         ctx.save();
         ctx.translate(x, y);
+        ctx.scale(spriteSize / 96, spriteSize / 96);
         ctx.fillStyle = "#171a1c";
         ctx.fillRect(-34, -40, 68, 44);
         ctx.save();
@@ -1074,6 +1086,7 @@ class StackGame {
             settledBlocks: this.settledBlocks.length,
             cameraY: this.cameraY,
             craneSpeed: this.getCraneSpeed(),
+            hook: { x: this.hookX, y: this.hookY },
             currentBlock: this.currentBlock ? {
                 x: this.currentBlock.position.x,
                 y: this.currentBlock.position.y,
@@ -1208,6 +1221,9 @@ function setupDebugPanel() {
         ["Crane max speed", "crane.maximumSpeed", 80, 500, 5],
         ["Speed per block", "crane.speedIncreasePerBox", 0, 15, 0.5],
         ["Drop gap", "crane.dropGap", 250, 700, 10],
+        ["Hook sprite size", "crane.hookSpriteSize", 48, 160, 1],
+        ["Hook contact offset", "crane.hookContactOffset", 0, 80, 1],
+        ["Hook/box overlap", "crane.hookBoxOverlap", 0, 30, 1],
         ["Block friction", "blockDefaults.friction", 0.05, 1.5, 0.05],
         ["Static friction", "blockDefaults.frictionStatic", 0.05, 2, 0.05],
         ["Bounce", "blockDefaults.restitution", 0, 0.6, 0.01],
@@ -1265,7 +1281,8 @@ function setupDebugPanelRefreshValues() {
     const inputs = [...DOM.debugPanel.querySelectorAll("input[type='number']")];
     const paths = [
         "physics.gravityY", "crane.startSpeed", "crane.maximumSpeed", "crane.speedIncreasePerBox",
-        "crane.dropGap", "blockDefaults.friction", "blockDefaults.frictionStatic", "blockDefaults.restitution",
+        "crane.dropGap", "crane.hookSpriteSize", "crane.hookContactOffset", "crane.hookBoxOverlap",
+        "blockDefaults.friction", "blockDefaults.frictionStatic", "blockDefaults.restitution",
         "landing.stableHoldMs", "loss.fallDistanceFromRest", "camera.smoothing", "atmosphere.dayNightCycleSeconds"
     ];
     inputs.forEach((input, index) => { input.value = getConfigValue(paths[index]); });

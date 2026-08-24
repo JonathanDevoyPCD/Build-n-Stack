@@ -32,8 +32,18 @@ The artboard dimensions match the physics dimensions in `GAME_CONFIG.boxes`. If 
 - Display size: 96 x 96 logical pixels
 - The cable connection is centred near the top of the artwork.
 - Keep the hook assembly centred so it remains aligned with the carried block.
+- `crane.hookSpriteSize` controls the rendered SVG size.
+- `crane.hookContactOffset` marks the visible hook tip relative to its centre pivot.
+- `crane.hookBoxOverlap` controls how far the hook tucks behind every attached box.
 
-The moving rail and cable remain code-drawn because their length and position change continuously during play.
+The box attachment is calculated from each box's individual height, so all six variations meet the hook consistently. These three values are also available in the `?debug=1` live tuner. The moving rail and cable remain code-drawn because their length and position change continuously during play.
+
+## Game logo
+
+- Editable file: `assets/images/logo/BNS-LOGO.svg`
+- Used on the main menu and in the gameplay HUD.
+- Keep the existing viewBox proportions so both placements scale consistently.
+- Convert custom-font lettering to outlines before public deployment so the logo does not depend on fonts installed on the player's device.
 
 ## Background and foreground layers
 
