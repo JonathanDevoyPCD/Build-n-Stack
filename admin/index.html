@@ -23,17 +23,20 @@
         <section id="loginPanel" class="admin-login panel" aria-labelledby="loginTitle">
             <p class="eyebrow">Restricted access</p>
             <h2 id="loginTitle">Supervisor sign-in</h2>
-            <p>Enter the local administrator password to view and export player submissions saved on this device.</p>
+            <p>Sign in with an approved Supabase administrator account to view and export private player submissions.</p>
             <form id="adminLoginForm">
-                <input type="hidden" name="username" value="site-supervisor" autocomplete="username">
                 <label class="field">
-                    <span>Password</span>
-                    <input id="adminPassword" type="password" autocomplete="current-password" required autofocus>
+                    <span>Email address</span>
+                    <input id="adminEmail" type="email" autocomplete="username" required autofocus>
+                </label>
+                <label class="field">
+                    <span>Account password</span>
+                    <input id="adminPassword" type="password" autocomplete="current-password" required>
                 </label>
                 <p id="adminLoginError" class="dialog-error" aria-live="polite"></p>
                 <button class="button button-primary button-large button-full" type="submit">Open Admin</button>
             </form>
-            <p class="admin-security-note"><strong>Prototype notice:</strong> MEDICUS is a convenience lock in browser code, not production security. The Supabase version will use authenticated administrator accounts and Row Level Security before private data is exposed.</p>
+            <p class="admin-security-note"><strong>Private data:</strong> contact details are protected by Supabase Auth and Row Level Security. The game’s publishable key cannot read this table.</p>
         </section>
 
         <section id="adminDashboard" class="admin-dashboard" hidden aria-labelledby="dashboardTitle">
@@ -41,7 +44,7 @@
                 <div><span>Total attempts</span><strong id="totalAttempts">0</strong></div>
                 <div><span>Unique players</span><strong id="uniquePlayers">0</strong></div>
                 <div><span>Highest score</span><strong id="highestScore">0</strong></div>
-                <div><span>Pending sync</span><strong id="pendingSync">0</strong></div>
+                <div><span>Cloud status</span><strong id="cloudStatus">—</strong></div>
             </div>
 
             <div class="admin-toolbar">
@@ -53,10 +56,11 @@
                     <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
                     <button id="exportButton" class="button button-primary" type="button">Export CSV</button>
                     <button id="clearDataButton" class="button admin-danger" type="button">Clear data</button>
+                    <button id="signOutButton" class="button button-secondary" type="button">Sign out</button>
                 </div>
             </div>
 
-            <p class="admin-data-source">Showing LocalStorage data from this browser only. Supabase synchronization is intentionally not active yet.</p>
+            <p id="adminDataSource" class="admin-data-source">Loading protected Supabase results...</p>
 
             <div class="admin-table-wrap">
                 <table>
@@ -68,21 +72,21 @@
                             <th>Email</th>
                             <th>Score</th>
                             <th>Duration</th>
-                            <th>Sync</th>
+                            <th>Consent</th>
                         </tr>
                     </thead>
                     <tbody id="resultsTableBody"></tbody>
                 </table>
-                <p id="adminEmpty" class="empty-state">No player submissions are stored on this device.</p>
+                <p id="adminEmpty" class="empty-state">No player submissions are stored in Supabase yet.</p>
             </div>
         </section>
     </main>
 
     <dialog id="clearDataDialog" class="password-dialog">
         <form method="dialog" id="clearDataForm">
-            <p class="eyebrow">Permanent local action</p>
+            <p class="eyebrow">Permanent cloud action</p>
             <h2>Clear all player data?</h2>
-            <p>This removes every locally stored submission on this device. Export the CSV first if you need a backup.</p>
+            <p>This removes every Build n' Stack submission and leaderboard score from Supabase. Export the CSV first if you need a backup.</p>
             <label class="field">
                 <span>Type CLEAR to confirm</span>
                 <input id="clearConfirmation" type="text" autocomplete="off">
@@ -95,6 +99,8 @@
         </form>
     </dialog>
 
+    <script src="../assets/vendor/supabase.js"></script>
+    <script src="../assets/supabase-config.js"></script>
     <script src="./admin.js"></script>
 </body>
 </html>

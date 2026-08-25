@@ -1,97 +1,133 @@
 "use strict";
 
 const ADMIN_CONFIG = {
-    password: "MEDICUS",
-    runsKey: "buildnstack.runs.v1"
+    resultsTable: "build_n_stack_player_results",
+    adminsTable: "build_n_stack_admins"
 };
 
 const elements = {
     loginPanel: document.querySelector("#loginPanel"),
     dashboard: document.querySelector("#adminDashboard"),
     loginForm: document.querySelector("#adminLoginForm"),
+    email: document.querySelector("#adminEmail"),
     password: document.querySelector("#adminPassword"),
     loginError: document.querySelector("#adminLoginError"),
     totalAttempts: document.querySelector("#totalAttempts"),
     uniquePlayers: document.querySelector("#uniquePlayers"),
     highestScore: document.querySelector("#highestScore"),
-    pendingSync: document.querySelector("#pendingSync"),
+    cloudStatus: document.querySelector("#cloudStatus"),
+    dataSource: document.querySelector("#adminDataSource"),
     tableBody: document.querySelector("#resultsTableBody"),
     empty: document.querySelector("#adminEmpty"),
     refreshButton: document.querySelector("#refreshButton"),
     exportButton: document.querySelector("#exportButton"),
     clearDataButton: document.querySelector("#clearDataButton"),
+    signOutButton: document.querySelector("#signOutButton"),
     clearDialog: document.querySelector("#clearDataDialog"),
     clearConfirmation: document.querySelector("#clearConfirmation"),
     clearError: document.querySelector("#clearDataError"),
     confirmClear: document.querySelector("#confirmClearDataButton")
 };
 
-function readRuns() {
-    try {
-        const parsed = JSON.parse(localStorage.getItem(ADMIN_CONFIG.runsKey) || "[]");
-        return Array.isArray(parsed) ? parsed : [];
-    } catch (error) {
-        console.warn("Could not read local Build n' Stack data.", error);
-        return [];
+let client = null;
+let currentRuns = [];
+
+function initializeSupabase() {
+    const settings = window.BuildNStackSupabase;
+    if (!settings?.url || !settings?.publishableKey || !window.supabase?.createClient) {
+        elements.loginError.textContent = "Supabase could not be initialized. Check the project configuration.";
+        elements.loginForm.querySelector("button").disabled = true;
+        return false;
     }
+    client = window.supabase.createClient(settings.url, settings.publishableKey);
+    return true;
 }
 
-function openDashboard() {
+async function hasAdminAccess(userId) {
+    const { data, error } = await client
+        .from(ADMIN_CONFIG.adminsTable)
+        .select("user_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+    if (error) throw error;
+    return Boolean(data);
+}
+
+async function openDashboard(user) {
+    if (!await hasAdminAccess(user.id)) {
+        await client.auth.signOut();
+        throw new Error("This Supabase account is not approved for Build n' Stack admin access.");
+    }
     elements.loginPanel.hidden = true;
     elements.dashboard.hidden = false;
-    renderDashboard();
+    await renderDashboard();
 }
 
-function renderDashboard() {
-    const runs = readRuns().sort((a, b) => String(b.completedAt).localeCompare(String(a.completedAt)));
-    const identities = new Set(runs.map((run) => String(run.email || `${run.playerName}-${run.contactNumber}`).toLowerCase()));
-    elements.totalAttempts.textContent = runs.length;
+async function renderDashboard() {
+    setDashboardBusy(true, "Refreshing protected Supabase results...");
+    try {
+        currentRuns = await fetchAllRuns();
+    } catch (error) {
+        setDashboardBusy(false, `Could not load results: ${error.message}`);
+        throw error;
+    }
+
+    const identities = new Set(currentRuns.map((run) => String(run.email).toLowerCase()));
+    elements.totalAttempts.textContent = currentRuns.length;
     elements.uniquePlayers.textContent = identities.size;
-    elements.highestScore.textContent = runs.reduce((best, run) => Math.max(best, Number(run.score) || 0), 0);
-    elements.pendingSync.textContent = runs.filter((run) => !run.synced).length;
+    elements.highestScore.textContent = currentRuns.reduce((best, run) => Math.max(best, Number(run.score) || 0), 0);
+    elements.cloudStatus.textContent = "LIVE";
     elements.tableBody.replaceChildren();
 
-    runs.forEach((run) => {
+    currentRuns.forEach((run) => {
         const row = document.createElement("tr");
         const values = [
-            formatDate(run.completedAt),
-            run.playerName,
-            run.contactNumber,
+            formatDate(run.completed_at),
+            run.player_name,
+            run.contact_number,
             run.email,
             run.score,
-            formatDuration(run.durationMs),
-            run.synced ? "Synced" : "Pending"
+            formatDuration(run.duration_ms),
+            run.consent_version
         ];
-        values.forEach((value, index) => {
+        values.forEach((value) => {
             const cell = document.createElement("td");
             cell.textContent = value ?? "";
-            if (index === 6 && !run.synced) cell.className = "sync-pending";
             row.append(cell);
         });
         elements.tableBody.append(row);
     });
 
-    elements.empty.hidden = runs.length > 0;
-    elements.exportButton.disabled = runs.length === 0;
-    elements.clearDataButton.disabled = runs.length === 0;
+    elements.empty.hidden = currentRuns.length > 0;
+    setDashboardBusy(false, `Showing ${currentRuns.length} protected cloud ${currentRuns.length === 1 ? "submission" : "submissions"}.`);
+}
+
+async function fetchAllRuns() {
+    const pageSize = 1000;
+    const runs = [];
+    for (let from = 0; ; from += pageSize) {
+        const { data, error } = await client
+            .from(ADMIN_CONFIG.resultsTable)
+            .select("run_id,player_name,contact_number,email,score,duration_ms,consent_version,consent_at,completed_at,created_at")
+            .order("completed_at", { ascending: false })
+            .range(from, from + pageSize - 1);
+        if (error) throw error;
+        runs.push(...(data || []));
+        if (!data || data.length < pageSize) return runs;
+    }
+}
+
+function setDashboardBusy(busy, message) {
+    elements.dataSource.textContent = message;
+    elements.refreshButton.disabled = busy;
+    elements.exportButton.disabled = busy || currentRuns.length === 0;
+    elements.clearDataButton.disabled = busy || currentRuns.length === 0;
 }
 
 function exportCsv() {
-    const runs = readRuns();
-    if (!runs.length) return;
-    const headers = ["run_id", "player_name", "contact_number", "email", "score", "duration_ms", "consent_version", "consent_at", "completed_at", "synced"];
-    const rows = runs.map((run) => [
-        run.runId,
-        run.playerName,
-        run.contactNumber,
-        run.email,
-        run.score,
-        run.durationMs,
-        run.consentVersion,
-        run.consentAt,
-        run.completedAt,
-        run.synced
-    ]);
+    if (!currentRuns.length) return;
+    const headers = ["run_id", "player_name", "contact_number", "email", "score", "duration_ms", "consent_version", "consent_at", "completed_at", "created_at"];
+    const rows = currentRuns.map((run) => headers.map((header) => run[header]));
     const csv = [headers, ...rows].map((row) => row.map(csvCell).join(",")).join("\r\n");
     const blob = new Blob(["\ufeff", csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -120,32 +156,77 @@ function formatDuration(milliseconds) {
     return `${minutes}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
-elements.loginForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    if (elements.password.value !== ADMIN_CONFIG.password) {
-        elements.loginError.textContent = "Incorrect password.";
-        elements.password.select();
-        return;
+async function restoreSession() {
+    const { data, error } = await client.auth.getSession();
+    if (error || !data.session?.user) return;
+    try {
+        await openDashboard(data.session.user);
+    } catch (accessError) {
+        elements.loginError.textContent = accessError.message;
     }
-    elements.loginError.textContent = "";
-    openDashboard();
+}
+
+elements.loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    elements.loginError.textContent = "Signing in...";
+    const submitButton = elements.loginForm.querySelector("button");
+    submitButton.disabled = true;
+
+    try {
+        const { data, error } = await client.auth.signInWithPassword({
+            email: elements.email.value.trim().toLowerCase(),
+            password: elements.password.value
+        });
+        if (error) throw error;
+        await openDashboard(data.user);
+        elements.loginError.textContent = "";
+        elements.password.value = "";
+    } catch (error) {
+        elements.loginError.textContent = error.message || "Admin sign-in failed.";
+        elements.password.select();
+    } finally {
+        submitButton.disabled = false;
+    }
 });
 
-elements.refreshButton.addEventListener("click", renderDashboard);
+elements.refreshButton.addEventListener("click", () => {
+    void renderDashboard().catch((error) => console.error(error));
+});
 elements.exportButton.addEventListener("click", exportCsv);
+elements.signOutButton.addEventListener("click", async () => {
+    await client.auth.signOut();
+    currentRuns = [];
+    elements.dashboard.hidden = true;
+    elements.loginPanel.hidden = false;
+    elements.email.focus();
+});
 elements.clearDataButton.addEventListener("click", () => {
     elements.clearConfirmation.value = "";
     elements.clearError.textContent = "";
     elements.clearDialog.showModal();
     window.setTimeout(() => elements.clearConfirmation.focus(), 0);
 });
-elements.confirmClear.addEventListener("click", () => {
+elements.confirmClear.addEventListener("click", async () => {
     if (elements.clearConfirmation.value !== "CLEAR") {
         elements.clearError.textContent = "Type CLEAR exactly to continue.";
         elements.clearConfirmation.select();
         return;
     }
-    localStorage.removeItem(ADMIN_CONFIG.runsKey);
+
+    elements.confirmClear.disabled = true;
+    elements.clearError.textContent = "Clearing protected cloud data...";
+    const { error } = await client
+        .from(ADMIN_CONFIG.resultsTable)
+        .delete()
+        .gte("created_at", "1970-01-01T00:00:00.000Z");
+    elements.confirmClear.disabled = false;
+
+    if (error) {
+        elements.clearError.textContent = error.message;
+        return;
+    }
     elements.clearDialog.close();
-    renderDashboard();
+    await renderDashboard();
 });
+
+if (initializeSupabase()) void restoreSession();

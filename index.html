@@ -112,7 +112,7 @@
                 </div>
                 <ol id="leaderboardList" class="leaderboard-list"></ol>
                 <p id="leaderboardEmpty" class="empty-state">No scores yet. Be the first to build.</p>
-                <button id="clearLeaderboardButton" class="clear-link" type="button">Clear leaderboard</button>
+                <a class="clear-link" href="./admin/">Admin / export</a>
             </div>
         </section>
 
@@ -134,25 +134,9 @@
         </section>
     </main>
 
-    <dialog id="passwordDialog" class="password-dialog">
-        <form method="dialog" id="passwordForm">
-            <!-- <p class="eyebrow">Restricted action</p> -->
-            <h2>Site supervisor access</h2>
-            <p>Enter the administrator password to clear this device's leaderboard.</p>
-            <input type="hidden" name="username" value="site-supervisor" autocomplete="username">
-            <label class="field">
-                <span>Password</span>
-                <input id="clearPassword" type="password" autocomplete="current-password" required>
-            </label>
-            <p id="passwordError" class="dialog-error" aria-live="polite"></p>
-            <div class="dialog-actions">
-                <button class="button button-secondary" value="cancel" type="submit">Cancel</button>
-                <button id="confirmClearButton" class="button button-primary" value="default" type="button">Clear Scores</button>
-            </div>
-        </form>
-    </dialog>
-
     <script src="./assets/vendor/matter.min.js"></script>
+    <script src="./assets/vendor/supabase.js"></script>
+    <script src="./assets/supabase-config.js"></script>
     <script src="./script.js"></script>
 </body>
 </html>

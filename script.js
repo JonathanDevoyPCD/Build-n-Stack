@@ -110,8 +110,6 @@ const GAME_CONFIG = {
     storage: {
         runsKey: "buildnstack.runs.v1",
         soundKey: "buildnstack.sound.v1",
-        playerKey: "buildnstack.player.v1",
-        adminPassword: "MEDICUS", // Convenience lock only; never production-grade security.
         consentVersion: "prototype-2026-08"
     },
 
@@ -176,11 +174,6 @@ const DOM = {
     gameOverLeaderboardButton: document.querySelector("#gameOverLeaderboardButton"),
     leaderboardList: document.querySelector("#leaderboardList"),
     leaderboardEmpty: document.querySelector("#leaderboardEmpty"),
-    clearLeaderboardButton: document.querySelector("#clearLeaderboardButton"),
-    passwordDialog: document.querySelector("#passwordDialog"),
-    clearPassword: document.querySelector("#clearPassword"),
-    passwordError: document.querySelector("#passwordError"),
-    confirmClearButton: document.querySelector("#confirmClearButton"),
     debugPanel: document.querySelector("#debugPanel"),
     canvas: document.querySelector("#gameCanvas")
 };
@@ -252,6 +245,19 @@ const StorageService = {
             .reduce((best, run) => Math.max(best, Number(run.score) || 0), 0);
     },
 
+    removeRun(runId) {
+        return this.write(
+            GAME_CONFIG.storage.runsKey,
+            this.getRuns().filter((candidate) => candidate.runId !== runId)
+        );
+    },
+
+    removePreviouslySyncedRuns() {
+        const runs = this.getRuns();
+        const pending = runs.filter((run) => !run.synced);
+        if (pending.length !== runs.length) this.write(GAME_CONFIG.storage.runsKey, pending);
+    },
+
     clearRuns() {
         try {
             localStorage.removeItem(GAME_CONFIG.storage.runsKey);
@@ -259,6 +265,85 @@ const StorageService = {
         } catch (error) {
             return false;
         }
+    }
+};
+
+/*
+ * SUPABASE DATA CONTROLS
+ * ------------------------------------------------------------
+ * Player contact details are written to a private RLS-protected table. The
+ * public leaderboard is a separate table containing only name, score and
+ * completion time. LocalStorage remains as an offline queue, so a temporary
+ * network interruption does not lose a completed run.
+ */
+const SupabaseService = {
+    client: null,
+
+    initialize() {
+        const settings = window.BuildNStackSupabase;
+        if (!settings?.url || !settings?.publishableKey || !window.supabase?.createClient) {
+            console.warn("Build n' Stack is running with local storage only; Supabase is unavailable.");
+            return false;
+        }
+        this.client = window.supabase.createClient(settings.url, settings.publishableKey, {
+            auth: {
+                persistSession: false,
+                autoRefreshToken: false,
+                detectSessionInUrl: false
+            }
+        });
+        return true;
+    },
+
+    async syncRun(run) {
+        if (!this.client || !run || run.synced) return false;
+        const { error } = await this.client
+            .from("build_n_stack_player_results")
+            .insert({
+                run_id: run.runId,
+                player_name: run.playerName,
+                contact_number: run.contactNumber,
+                email: run.email,
+                score: Math.max(0, Math.round(Number(run.score) || 0)),
+                duration_ms: Math.max(0, Math.round(Number(run.durationMs) || 0)),
+                consent_version: run.consentVersion,
+                consent_at: run.consentAt,
+                completed_at: run.completedAt
+            });
+
+        if (error && error.code !== "23505") throw error;
+        StorageService.removeRun(run.runId);
+        return true;
+    },
+
+    async syncPendingRuns() {
+        if (!this.client || !navigator.onLine) return;
+        const pending = StorageService.getRuns().filter((run) => !run.synced);
+        for (const run of pending) {
+            try {
+                await this.syncRun(run);
+            } catch (error) {
+                console.warn("A Build n' Stack result is queued for a later sync.", error.message || error);
+                break;
+            }
+        }
+        if (pending.length && !DOM.screens.leaderboard.hidden) void renderLeaderboard();
+    },
+
+    async getLeaderboard() {
+        if (!this.client) return null;
+        const { data, error } = await this.client
+            .from("build_n_stack_leaderboard")
+            .select("player_name,score,completed_at")
+            .order("score", { ascending: false })
+            .order("completed_at", { ascending: true })
+            .limit(GAME_CONFIG.scoring.leaderboardSize);
+        if (error) throw error;
+        return data.map((entry) => ({
+            playerName: entry.player_name,
+            score: entry.score,
+            completedAt: entry.completed_at
+        }));
     }
 };
 
@@ -1098,7 +1183,7 @@ class StackGame {
     }
 }
 
-let currentPlayer = StorageService.read(GAME_CONFIG.storage.playerKey, null);
+let currentPlayer = null;
 let game = null;
 
 function showScreen(name) {
@@ -1139,8 +1224,12 @@ function startGame() {
 }
 
 function finishGame(result) {
-    StorageService.saveRun(currentPlayer, result.score, result.durationMs);
-    const best = StorageService.getBestScore(currentPlayer.email);
+    const run = StorageService.saveRun(currentPlayer, result.score, result.durationMs);
+    const best = Math.max(Number(currentPlayer.bestScore) || 0, result.score);
+    currentPlayer.bestScore = best;
+    void SupabaseService.syncRun(run).catch((error) => {
+        console.warn("This result is safely queued on the device and will sync when the connection returns.", error.message || error);
+    });
     DOM.finalScore.textContent = result.score;
     DOM.bestScore.textContent = best;
     DOM.gameOverReason.textContent = result.reason;
@@ -1157,11 +1246,14 @@ function showPlacementMessage(message) {
 
 function returnToMenu() {
     game?.stop();
+    currentPlayer = null;
+    DOM.playerForm.reset();
     showScreen("menu");
 }
 
-function renderLeaderboard() {
-    const leaders = StorageService.getLeaderboard();
+let leaderboardRequestId = 0;
+
+function renderLeaderboardEntries(leaders) {
     DOM.leaderboardList.replaceChildren();
     leaders.forEach((leader) => {
         const item = document.createElement("li");
@@ -1175,6 +1267,36 @@ function renderLeaderboard() {
         DOM.leaderboardList.append(item);
     });
     DOM.leaderboardEmpty.hidden = leaders.length > 0;
+}
+
+async function renderLeaderboard() {
+    const requestId = ++leaderboardRequestId;
+    const localLeaders = StorageService.getLeaderboard();
+    renderLeaderboardEntries(localLeaders);
+
+    if (!SupabaseService.client) {
+        DOM.leaderboardEmpty.textContent = "No scores yet. Be the first to build.";
+        return;
+    }
+
+    if (!localLeaders.length) {
+        DOM.leaderboardEmpty.hidden = false;
+        DOM.leaderboardEmpty.textContent = "Loading leaderboard...";
+    }
+
+    try {
+        const cloudLeaders = await SupabaseService.getLeaderboard();
+        if (requestId !== leaderboardRequestId) return;
+        renderLeaderboardEntries(cloudLeaders);
+        DOM.leaderboardEmpty.textContent = "No scores yet. Be the first to build.";
+    } catch (error) {
+        if (requestId !== leaderboardRequestId) return;
+        console.warn("The cloud leaderboard is temporarily unavailable.", error.message || error);
+        if (!localLeaders.length) {
+            DOM.leaderboardEmpty.hidden = false;
+            DOM.leaderboardEmpty.textContent = "Leaderboard unavailable. Please try again shortly.";
+        }
+    }
 }
 
 function validatePlayerForm(form) {
@@ -1197,13 +1319,6 @@ function validatePlayerForm(form) {
     });
     form.querySelectorAll("input").forEach((input) => input.classList.toggle("is-invalid", Boolean(errors[input.name])));
     return Object.keys(errors).length ? null : values;
-}
-
-function prefillPlayerForm() {
-    if (!currentPlayer) return;
-    document.querySelector("#playerName").value = currentPlayer.name || "";
-    document.querySelector("#playerPhone").value = currentPlayer.phone || "";
-    document.querySelector("#playerEmail").value = currentPlayer.email || "";
 }
 
 function updateSoundButton() {
@@ -1357,7 +1472,8 @@ function clamp(value, minimum, maximum) {
 }
 
 DOM.beginButton.addEventListener("click", () => {
-    prefillPlayerForm();
+    currentPlayer = null;
+    DOM.playerForm.reset();
     showScreen("form");
 });
 DOM.menuLeaderboardButton.addEventListener("click", () => showScreen("leaderboard"));
@@ -1369,9 +1485,9 @@ DOM.playerForm.addEventListener("submit", (event) => {
         name: values.name,
         phone: values.phone,
         email: values.email.toLowerCase(),
-        consentAt: new Date().toISOString()
+        consentAt: new Date().toISOString(),
+        bestScore: 0
     };
-    StorageService.write(GAME_CONFIG.storage.playerKey, currentPlayer);
     startGame();
 });
 DOM.soundButton.addEventListener("click", () => AudioService.toggle());
@@ -1379,33 +1495,21 @@ DOM.quitButton.addEventListener("click", returnToMenu);
 DOM.playAgainButton.addEventListener("click", startGame);
 DOM.gameOverLeaderboardButton.addEventListener("click", () => showScreen("leaderboard"));
 document.querySelectorAll("[data-action='menu']").forEach((button) => button.addEventListener("click", returnToMenu));
-DOM.clearLeaderboardButton.addEventListener("click", () => {
-    DOM.clearPassword.value = "";
-    DOM.passwordError.textContent = "";
-    DOM.passwordDialog.showModal();
-    window.setTimeout(() => DOM.clearPassword.focus(), 0);
-});
-DOM.confirmClearButton.addEventListener("click", () => {
-    if (DOM.clearPassword.value !== GAME_CONFIG.storage.adminPassword) {
-        DOM.passwordError.textContent = "Incorrect password.";
-        DOM.clearPassword.select();
-        return;
-    }
-    StorageService.clearRuns();
-    DOM.passwordDialog.close();
-    renderLeaderboard();
-});
 window.addEventListener("keydown", (event) => {
     if (event.code !== "Space" || DOM.screens.game.hidden || !DOM.screens.gameOver.hidden) return;
     event.preventDefault();
     game?.dropBlock();
 });
 window.addEventListener("storage", (event) => {
-    if (event.key === GAME_CONFIG.storage.runsKey && !DOM.screens.leaderboard.hidden) renderLeaderboard();
+    if (event.key === GAME_CONFIG.storage.runsKey && !DOM.screens.leaderboard.hidden) void renderLeaderboard();
 });
+window.addEventListener("online", () => { void SupabaseService.syncPendingRuns(); });
 
 updateSoundButton();
 setupDebugPanel();
+StorageService.removePreviouslySyncedRuns();
+SupabaseService.initialize();
+void SupabaseService.syncPendingRuns();
 showScreen("menu");
 
 window.BuildNStack = {
@@ -1415,6 +1519,8 @@ window.BuildNStack = {
     getState: () => game?.getState() || null,
     getRuns: () => StorageService.getRuns(),
     getLeaderboard: () => StorageService.getLeaderboard(),
+    getCloudLeaderboard: () => SupabaseService.getLeaderboard(),
+    syncPendingRuns: () => SupabaseService.syncPendingRuns(),
     clearLocalData: () => StorageService.clearRuns(),
     useTestPlayer() {
         currentPlayer = { name: "Test Builder", phone: "0800000000", email: "test@example.com", consentAt: new Date().toISOString() };

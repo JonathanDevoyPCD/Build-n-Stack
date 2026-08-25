@@ -252,6 +252,8 @@ button { touch-action: manipulation; }
     text-underline-offset: 4px;
 }
 
+a.clear-link { align-content: center; width: fit-content; }
+
 .text-back { margin-bottom: 34px; text-decoration: none; text-transform: uppercase; }
 .field { display: grid; gap: 7px; margin-bottom: 17px; }
 .field > span {

@@ -4,10 +4,11 @@
   "private": true,
   "description": "CAT Footwear tablet-first endless stacking game",
   "scripts": {
-    "check": "node --check script.js && node --check admin/admin.js",
+    "check": "node --check script.js && node --check admin/admin.js && node --check assets/supabase-config.js",
     "serve": "npx --yes http-server . -p 4173 -c-1"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.112.4",
     "matter-js": "0.20.0"
   }
 }

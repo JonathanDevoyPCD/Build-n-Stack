@@ -1,3 +1,7 @@
 node_modules/
 .playwright-cli/
 output/
+.env
+.env.*
+!.env.example
+supabase/.temp/
