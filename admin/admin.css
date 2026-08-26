@@ -26,7 +26,7 @@
 .admin-header h1,
 .admin-toolbar h2 {
     margin: 0;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: var(--font-display);
     font-size: clamp(2rem, 6vw, 4rem);
     font-weight: 900;
     letter-spacing: -0.035em;
@@ -42,7 +42,7 @@
     padding: 12px 15px;
     border: 2px solid var(--cat-yellow);
     color: var(--cat-yellow);
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: var(--font-body);
     font-weight: 800;
     letter-spacing: 0.08em;
     text-align: center;
@@ -70,8 +70,8 @@
 
 .admin-summary span,
 .admin-summary strong { display: block; }
-.admin-summary span { color: #b8bec0; font: 700 0.76rem "Barlow Condensed", sans-serif; letter-spacing: 0.1em; text-transform: uppercase; }
-.admin-summary strong { margin-top: 3px; font: 900 clamp(2rem, 5vw, 3.5rem)/1 "Barlow Condensed", sans-serif; }
+.admin-summary span { color: #b8bec0; font: 700 0.76rem var(--font-body); letter-spacing: 0.1em; text-transform: uppercase; }
+.admin-summary strong { margin-top: 3px; font: 900 clamp(2rem, 5vw, 3.5rem)/1 var(--font-display); }
 
 .admin-toolbar { display: flex; gap: 22px; align-items: end; justify-content: space-between; }
 .admin-actions { display: flex; flex-wrap: wrap; gap: 9px; justify-content: flex-end; }
@@ -89,9 +89,9 @@
 table { width: 100%; border-collapse: collapse; min-width: 920px; }
 th,
 td { padding: 13px 14px; border-bottom: 1px solid #d1cdc2; text-align: left; vertical-align: top; }
-th { position: sticky; top: 0; color: #f2b705; background: #101214; font: 800 0.75rem "Barlow Condensed", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+th { position: sticky; top: 0; color: #f2b705; background: #101214; font: 700 0.75rem var(--font-body); letter-spacing: 0.08em; text-transform: uppercase; }
 td { font-size: 0.88rem; }
-td:nth-child(5) { font: 900 1.25rem "Barlow Condensed", sans-serif; text-align: center; }
+td:nth-child(5) { font: 900 1.25rem var(--font-display); text-align: center; }
 .sync-pending { color: #8a4f00; font-weight: 700; }
 .admin-table-wrap .empty-state { margin: 0; }
 

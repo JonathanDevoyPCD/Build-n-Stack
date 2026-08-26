@@ -5,7 +5,7 @@ All artwork in this folder is SVG and can be opened directly in Adobe Illustrato
 - `boxes/` — six editable block sprites
 - `crane/` — editable crane-hook sprite
 - `backgrounds/` — editable foreground, mid-ground, clouds and birds
-- `logo/BNS-LOGO.svg` — Build n' Stack menu and HUD logo
+- The Build n' Stack menu and HUD titles are live text set in the CAT Mier fonts from `../fonts/`.
 
 The game loads these files directly. Save edits back to the same SVG filename and refresh the browser; no PNG export is required.
 

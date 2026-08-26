@@ -38,12 +38,9 @@ The artboard dimensions match the physics dimensions in `GAME_CONFIG.boxes`. If 
 
 The box attachment is calculated from each box's individual height, so all six variations meet the hook consistently. These three values are also available in the `?debug=1` live tuner. The moving rail and cable remain code-drawn because their length and position change continuously during play.
 
-## Game logo
+## Game title
 
-- Editable file: `assets/images/logo/BNS-LOGO.svg`
-- Used on the main menu and in the gameplay HUD.
-- Keep the existing viewBox proportions so both placements scale consistently.
-- Convert custom-font lettering to outlines before public deployment so the logo does not depend on fonts installed on the player's device.
+The Build n' Stack title is live HTML text rather than a logo image. It uses Mier A Black from `assets/fonts/`, with the supporting interface set in Mier B Bold and Regular. Edit the title wording in `index.html` and its visual treatment in `style.css`.
 
 ## Background and foreground layers
 

@@ -1,8 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap');
+@font-face {
+    font-family: "Mier A";
+    src:
+        url("./assets/fonts/MIERA-BLACK.woff2") format("woff2"),
+        url("./assets/fonts/MIERA-BLACK.woff") format("woff"),
+        url("./assets/fonts/MIERA-BLACK.OTF") format("opentype");
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Mier B";
+    src:
+        url("./assets/fonts/MIERB-REGULAR.woff2") format("woff2"),
+        url("./assets/fonts/MIERB-REGULAR.woff") format("woff"),
+        url("./assets/fonts/MIERB-REGULAR.OTF") format("opentype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Mier B";
+    src:
+        url("./assets/fonts/MIERB-BOLD.woff2") format("woff2"),
+        url("./assets/fonts/MIERB-BOLD.woff") format("woff"),
+        url("./assets/fonts/MIERB-BOLD.OTF") format("opentype");
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
 
 :root {
     /* Tablet-first game frame. Increase this only if a wider game layout is desired. */
     --game-max-width: 768px;
+    --font-display: "Mier A", Impact, sans-serif;
+    --font-body: "Mier B", Arial, sans-serif;
     --cat-yellow: #f2b705;
     --ink: #101214;
     --concrete: #d7d4ca;
@@ -38,7 +71,7 @@ body {
     overflow: hidden;
     background: var(--ink);
     color: var(--ink);
-    font-family: "Barlow", sans-serif;
+    font-family: var(--font-body);
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -103,7 +136,7 @@ button { touch-action: manipulation; }
     padding: 8px 12px;
     color: var(--cat-yellow);
     background: var(--ink);
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: var(--font-body);
     font-size: 0.85rem;
     font-weight: 800;
     letter-spacing: 0.12em;
@@ -122,16 +155,22 @@ button { touch-action: manipulation; }
 }
 
 .hero-copy h1 {
-    width: min(100%, 520px);
-    max-width: none;
+    max-width: 100%;
     margin: 0;
-    line-height: 0;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(5.2rem, 17vw, 10.5rem);
+    font-weight: 900;
+    letter-spacing: -0.065em;
+    line-height: 0.69;
+    text-transform: uppercase;
 }
 
-.hero-logo {
-    display: block;
-    width: 100%;
-    height: auto;
+.hero-copy h1 span {
+    display: inline-block;
+    padding-right: 0.08em;
+    color: var(--cat-yellow);
+    text-shadow: 4px 4px 0 var(--ink);
 }
 
 .hero-tagline {
@@ -155,9 +194,9 @@ button { touch-action: manipulation; }
     border: 2px solid var(--ink);
     border-radius: 0;
     cursor: pointer;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: var(--font-body);
     font-size: 1.05rem;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
@@ -227,7 +266,7 @@ button { touch-action: manipulation; }
 
 .panel h2 {
     margin: 0;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: var(--font-display);
     font-size: clamp(2.8rem, 8vw, 5rem);
     font-weight: 900;
     letter-spacing: -0.035em;
@@ -257,7 +296,7 @@ a.clear-link { align-content: center; width: fit-content; }
 .text-back { margin-bottom: 34px; text-decoration: none; text-transform: uppercase; }
 .field { display: grid; gap: 7px; margin-bottom: 17px; }
 .field > span {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: var(--font-body);
     font-size: 0.9rem;
     font-weight: 800;
     letter-spacing: 0.09em;
@@ -326,10 +365,9 @@ a.clear-link { align-content: center; width: fit-content; }
     border-left: 5px solid var(--cat-yellow);
 }
 
-.hud-label { display: block; color: #cfd3d4; font: 700 0.68rem "Barlow Condensed", sans-serif; letter-spacing: 0.14em; text-transform: uppercase; }
-.score-card strong { font: 800 2rem/0.95 "Barlow Condensed", sans-serif; }
-.hud-brand { align-self: center; width: clamp(76px, 14vw, 112px); padding-top: 4px; line-height: 0; }
-.hud-brand img { display: block; width: 100%; height: auto; }
+.hud-label { display: block; color: #cfd3d4; font: 700 0.68rem var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; }
+.score-card strong { font: 900 2rem/0.95 var(--font-display); }
+.hud-brand { align-self: center; padding-top: 8px; color: rgb(16 18 20 / 66%); font: 900 clamp(0.72rem, 2vw, 1rem) var(--font-display); letter-spacing: 0.08em; }
 .hud-actions { display: flex; gap: 7px; justify-self: end; pointer-events: auto; }
 
 .icon-button {
@@ -339,7 +377,7 @@ a.clear-link { align-content: center; width: fit-content; }
     color: var(--ink);
     background: rgb(246 242 232 / 90%);
     cursor: pointer;
-    font: 800 0.7rem "Barlow Condensed", sans-serif;
+    font: 700 0.7rem var(--font-body);
     letter-spacing: 0.06em;
 }
 
@@ -353,7 +391,7 @@ a.clear-link { align-content: center; width: fit-content; }
     padding: 10px 16px;
     color: white;
     background: rgb(16 18 20 / 82%);
-    font: 700 1rem "Barlow Condensed", sans-serif;
+    font: 700 1rem var(--font-body);
     letter-spacing: 0.06em;
     text-align: center;
     text-transform: uppercase;
@@ -368,7 +406,7 @@ a.clear-link { align-content: center; width: fit-content; }
     top: 24%;
     right: 50%;
     color: white;
-    font: 900 clamp(2.5rem, 9vw, 5.8rem) "Barlow Condensed", sans-serif;
+    font: 900 clamp(2.5rem, 9vw, 5.8rem) var(--font-display);
     letter-spacing: -0.04em;
     text-shadow: 4px 4px 0 rgb(16 18 20 / 75%);
     text-transform: uppercase;
@@ -399,8 +437,8 @@ a.clear-link { align-content: center; width: fit-content; }
 .result-grid div { padding: 14px; background: #fff; }
 .result-grid span,
 .result-grid strong { display: block; }
-.result-grid span { color: #697074; font: 700 0.76rem "Barlow Condensed", sans-serif; letter-spacing: 0.1em; text-transform: uppercase; }
-.result-grid strong { font: 900 3.4rem/1 "Barlow Condensed", sans-serif; }
+.result-grid span { color: #697074; font: 700 0.76rem var(--font-body); letter-spacing: 0.1em; text-transform: uppercase; }
+.result-grid strong { font: 900 3.4rem/1 var(--font-display); }
 .game-over-panel .button + .button { margin-top: 10px; }
 .game-over-panel .text-link { margin-top: 16px; }
 
@@ -408,13 +446,13 @@ a.clear-link { align-content: center; width: fit-content; }
 .leaderboard-panel { align-self: center; width: min(100%, 720px); }
 .leaderboard-head,
 .leaderboard-list li { display: grid; grid-template-columns: minmax(0, 1fr) 70px; gap: 14px; align-items: center; }
-.leaderboard-head { margin-top: 28px; padding: 0 12px 8px; border-bottom: 2px solid var(--ink); color: #687075; font: 700 0.73rem "Barlow Condensed", sans-serif; letter-spacing: 0.11em; text-transform: uppercase; }
+.leaderboard-head { margin-top: 28px; padding: 0 12px 8px; border-bottom: 2px solid var(--ink); color: #687075; font: 700 0.73rem var(--font-body); letter-spacing: 0.11em; text-transform: uppercase; }
 .leaderboard-head span:last-child { text-align: right; }
 .leaderboard-list { margin: 0; padding: 0; list-style: none; counter-reset: leaderboard; }
 .leaderboard-list li { counter-increment: leaderboard; min-height: 58px; padding: 8px 12px; border-bottom: 1px solid #c8c6be; }
 .leaderboard-name { min-width: 0; overflow: hidden; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-.leaderboard-name::before { display: inline-grid; width: 30px; height: 30px; margin-right: 12px; place-items: center; content: counter(leaderboard, decimal-leading-zero); color: var(--cat-yellow); background: var(--ink); font: 700 0.78rem "Barlow Condensed", sans-serif; }
-.leaderboard-score { font: 900 1.7rem "Barlow Condensed", sans-serif; text-align: right; }
+.leaderboard-name::before { display: inline-grid; width: 30px; height: 30px; margin-right: 12px; place-items: center; content: counter(leaderboard, decimal-leading-zero); color: var(--cat-yellow); background: var(--ink); font: 700 0.78rem var(--font-body); }
+.leaderboard-score { font: 900 1.7rem var(--font-display); text-align: right; }
 .empty-state { padding: 36px 0; color: #686e70; text-align: center; }
 .clear-link { display: block; margin: 22px auto 0; color: var(--danger); }
 
@@ -430,7 +468,7 @@ a.clear-link { align-content: center; width: fit-content; }
 }
 .password-dialog::backdrop { background: rgb(16 18 20 / 76%); backdrop-filter: blur(3px); }
 .password-dialog form { padding: 28px; }
-.password-dialog h2 { margin: 0; font: 900 2.2rem "Barlow Condensed", sans-serif; text-transform: uppercase; }
+.password-dialog h2 { margin: 0; font: 900 2.2rem var(--font-display); text-transform: uppercase; }
 .password-dialog p:not(.eyebrow, .dialog-error) { color: #5c6468; line-height: 1.45; }
 .dialog-actions { display: grid; grid-template-columns: 1fr 1.35fr; gap: 10px; margin-top: 18px; }
 
@@ -449,7 +487,7 @@ a.clear-link { align-content: center; width: fit-content; }
     font-size: 0.78rem;
     touch-action: auto;
 }
-.debug-panel h2 { margin: 0 0 4px; color: var(--cat-yellow); font: 900 1.4rem "Barlow Condensed", sans-serif; text-transform: uppercase; }
+.debug-panel h2 { margin: 0 0 4px; color: var(--cat-yellow); font: 900 1.4rem var(--font-display); text-transform: uppercase; }
 .debug-panel p { margin: 0 0 12px; color: #bfc4c6; }
 .debug-control { display: grid; grid-template-columns: 1fr 72px; gap: 8px; align-items: center; margin: 10px 0; }
 .debug-control label { font-weight: 600; }
@@ -461,7 +499,7 @@ a.clear-link { align-content: center; width: fit-content; }
     .menu-screen { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr); grid-template-rows: auto 1fr; column-gap: 40px; }
     .brand-lockup { grid-column: 1 / -1; width: 100%; }
     .hero-copy { align-self: center; width: 100%; margin: 20px 0 12vh; }
-    .hero-copy h1 { max-width: 380px; }
+    .hero-copy h1 { font-size: clamp(4.5rem, 12vw, 8rem); }
     .menu-actions { align-self: center; width: 100%; margin: 0 0 12vh; }
     .site-silhouette { right: 0; width: 35vw; height: 38vh; }
     .panel-form { width: min(94%, 900px); }
@@ -476,6 +514,7 @@ a.clear-link { align-content: center; width: fit-content; }
 
 @media (max-width: 560px) {
     .menu-screen { padding-inline: calc(18px + var(--safe-right)) calc(18px + var(--safe-left)); }
+    .hero-copy h1 { font-size: clamp(4.7rem, 25vw, 7.2rem); }
     .hud-brand { display: none; }
     .game-hud { grid-template-columns: 1fr 1fr; }
     .icon-button { min-width: 50px; padding-inline: 8px; font-size: 0.62rem; }

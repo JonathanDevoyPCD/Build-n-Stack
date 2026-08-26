@@ -991,7 +991,7 @@ class StackGame {
             }
         } else {
             ctx.fillStyle = "#111315";
-            ctx.font = "900 30px 'Barlow Condensed', sans-serif";
+            ctx.font = "900 30px 'Mier A', Impact, sans-serif";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText("CAT", 0, 2);
