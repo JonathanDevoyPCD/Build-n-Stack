@@ -19,7 +19,7 @@ const GAME_CONFIG = {
     },
 
     physics: {
-        gravityY: 1.02,            // Matter.js gravity strength. Higher values fall faster.
+        gravityY: 1.62,            // Matter.js gravity strength. Higher values fall faster.
         gravityScale: 0.001,       // Gravity scale. Usually keep close to Matter's default.
         fixedStepMs: 1000 / 60,    // Fixed physics update interval for consistent devices.
         maxUpdatesPerFrame: 5,     // Prevents a slow frame from creating a physics spiral.
@@ -30,7 +30,7 @@ const GAME_CONFIG = {
     },
 
     crane: {
-        startSpeed: 112,           // Hook travel speed in world pixels per second.
+        startSpeed: 182,           // Hook travel speed in world pixels per second.
         maximumSpeed: 245,         // Fastest hook speed after difficulty increases.
         speedIncreasePerBox: 3.5,  // Extra hook speed for each safely placed box.
         travelMargin: 115,         // Distance kept clear from each side of the visible world.
@@ -1056,7 +1056,7 @@ class StackGame {
             const ratio = image.width / image.height;
             const width = Math.max(this.view.width, 900);
             const height = width / ratio;
-            ctx.drawImage(image, (this.view.width - width) / 2, parallaxGroundY - height * 0.72, width, height);
+            ctx.drawImage(image, (this.view.width - width) / 2, parallaxGroundY - height * 0.62, width, height);
             return;
         }
         if (normalGroundY > this.view.height + 140) return;
