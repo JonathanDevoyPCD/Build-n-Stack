@@ -30,9 +30,9 @@ const GAME_CONFIG = {
     },
 
     crane: {
-        startSpeed: 182,           // Hook travel speed in world pixels per second.
-        maximumSpeed: 245,         // Fastest hook speed after difficulty increases.
-        speedIncreasePerBox: 3.5,  // Extra hook speed for each safely placed box.
+        startSpeed: 200,           // Hook travel speed in world pixels per second.
+        maximumSpeed: 350,         // Fastest hook speed after difficulty increases.
+        speedIncreasePerBox: 5,  // Extra hook speed for each safely placed box.
         travelMargin: 115,         // Distance kept clear from each side of the visible world.
         dropGap: 500,              // Vertical space from tower top to crane hook.
         hookSpriteSize: 96,        // Display width/height of crane-hook.svg in logical pixels.
@@ -45,11 +45,11 @@ const GAME_CONFIG = {
     },
 
     blockDefaults: {
-        density: 0.0027,           // Overall mass per area. Individual types can override it.
-        friction: 0.72,            // Sliding friction between blocks.
-        frictionStatic: 0.95,      // Resistance before a resting block begins sliding.
+        density: 0.0015,           // Overall mass per area. Individual types can override it.
+        friction: 1,            // Sliding friction between blocks.
+        frictionStatic: 1,      // Resistance before a resting block begins sliding.
         frictionAir: 0.008,        // Air resistance while falling.
-        restitution: 0.035,        // Bounce. Keep low for heavy construction materials.
+        restitution: 0.001,        // Bounce. Keep low for heavy construction materials.
         chamferRadius: 2            // Tiny rounded physics corners reduce collision snagging.
     },
 
@@ -59,7 +59,7 @@ const GAME_CONFIG = {
         maxAngularSpeed: 0.018,    // Rotation speed must remain below this value to count.
         stableHoldMs: 620,         // Time the block must stay stable before score is awarded.
         perfectOffset: 13,         // Centre offset in pixels that earns PERFECT feedback.
-        hardImpactSpeed: 7.5       // Impact speed that triggers stronger shake and particles.
+        hardImpactSpeed: 2.5       // Impact speed that triggers stronger shake and particles.
     },
 
     loss: {
@@ -81,7 +81,10 @@ const GAME_CONFIG = {
 
     difficulty: {
         randomizeBlockOrder: true, // False cycles through the six block types in order.
-        activeDynamicBlocks: 48    // Older off-screen blocks are frozen for endless performance.
+        stabilityCheckpointBlocks: 0, // Every N accepted blocks become static before the next block arrives. Set 0 to disable.
+        freezeBlocksBelowViewport: false, // Static blocks below the camera keep supporting the tower without active physics.
+        offscreenFreezePadding: 0, // Extra pixels below the screen before a block is frozen. Use 0 for the earliest safe freeze.
+        activeDynamicBlocks: 4    // Secondary performance cap if checkpoints are disabled or increased.
     },
 
     scoring: {
@@ -637,6 +640,7 @@ class StackGame {
 
         if (this.phase === "falling") this.updateFallingBlock(stepMs);
         this.checkSettledBlocks();
+        this.freezeOffscreenBlocks();
 
         if (this.phase === "waiting-next" && this.runTimeMs >= this.nextSpawnAt) this.spawnBlock();
     }
@@ -698,11 +702,11 @@ class StackGame {
         this.phase = "waiting-next";
         this.nextSpawnAt = this.runTimeMs + GAME_CONFIG.crane.spawnDelayMs;
         this.cameraTargetY = Math.min(0, this.getTowerTop() + GAME_CONFIG.camera.targetTopOffset);
-        this.freezeOldBlocks();
+        const checkpointLocked = this.freezeOldBlocks();
 
         if (perfect) AudioService.perfect();
         this.callbacks.onScore?.(this.score);
-        this.callbacks.onPlacement?.(perfect ? "PERFECT" : "SECURE");
+        this.callbacks.onPlacement?.(checkpointLocked ? "LOCKED" : perfect ? "PERFECT" : "SECURE");
     }
 
     checkSettledBlocks() {
@@ -719,12 +723,39 @@ class StackGame {
 
     freezeOldBlocks() {
         const activeBlocks = this.settledBlocks.filter((block) => !block.plugin.stackData.frozen);
+        const checkpointSize = Math.max(0, Math.floor(Number(GAME_CONFIG.difficulty.stabilityCheckpointBlocks) || 0));
+        const reachedCheckpoint = checkpointSize > 0 && this.settledBlocks.length % checkpointSize === 0;
+
+        if (reachedCheckpoint) {
+            activeBlocks.forEach((block) => this.freezeBlock(block));
+            return activeBlocks.length > 0;
+        }
+
         const extra = activeBlocks.length - GAME_CONFIG.difficulty.activeDynamicBlocks;
-        if (extra <= 0) return;
-        activeBlocks.slice(0, extra).forEach((block) => {
-            Matter.Body.setStatic(block, true);
-            block.plugin.stackData.frozen = true;
+        if (extra <= 0) return false;
+        activeBlocks.slice(0, extra).forEach((block) => this.freezeBlock(block));
+        return false;
+    }
+
+    freezeOffscreenBlocks() {
+        if (!GAME_CONFIG.difficulty.freezeBlocksBelowViewport || this.phase === "game-over") return 0;
+        const padding = Math.max(0, Number(GAME_CONFIG.difficulty.offscreenFreezePadding) || 0);
+        let frozenCount = 0;
+
+        this.settledBlocks.forEach((block) => {
+            if (block.plugin.stackData.frozen) return;
+            const screenTop = this.worldToScreen(block.position.x, block.bounds.min.y).y;
+            if (screenTop > this.view.height + padding && this.freezeBlock(block)) frozenCount += 1;
         });
+
+        return frozenCount;
+    }
+
+    freezeBlock(block) {
+        if (!block || block.plugin.stackData.frozen) return false;
+        Matter.Body.setStatic(block, true);
+        block.plugin.stackData.frozen = true;
+        return true;
     }
 
     triggerGameOver(reason) {
@@ -1342,6 +1373,8 @@ function setupDebugPanel() {
         ["Block friction", "blockDefaults.friction", 0.05, 1.5, 0.05],
         ["Static friction", "blockDefaults.frictionStatic", 0.05, 2, 0.05],
         ["Bounce", "blockDefaults.restitution", 0, 0.6, 0.01],
+        ["Blocks per checkpoint", "difficulty.stabilityCheckpointBlocks", 0, 12, 1],
+        ["Offscreen freeze gap", "difficulty.offscreenFreezePadding", 0, 400, 10],
         ["Stable hold ms", "landing.stableHoldMs", 100, 1800, 50],
         ["Fall distance", "loss.fallDistanceFromRest", 30, 400, 5],
         ["Camera smoothing", "camera.smoothing", 0.01, 0.4, 0.005],
@@ -1398,6 +1431,8 @@ function setupDebugPanelRefreshValues() {
         "physics.gravityY", "crane.startSpeed", "crane.maximumSpeed", "crane.speedIncreasePerBox",
         "crane.dropGap", "crane.hookSpriteSize", "crane.hookContactOffset", "crane.hookBoxOverlap",
         "blockDefaults.friction", "blockDefaults.frictionStatic", "blockDefaults.restitution",
+        "difficulty.stabilityCheckpointBlocks",
+        "difficulty.offscreenFreezePadding",
         "landing.stableHoldMs", "loss.fallDistanceFromRest", "camera.smoothing", "atmosphere.dayNightCycleSeconds"
     ];
     inputs.forEach((input, index) => { input.value = getConfigValue(paths[index]); });
