@@ -31,8 +31,8 @@ const GAME_CONFIG = {
 
     crane: {
         startSpeed: 200,           // Hook travel speed in world pixels per second.
-        maximumSpeed: 650,         // Fastest hook speed after difficulty increases.
-        speedIncreasePerBox: 5,  // Extra hook speed for each safely placed box.
+        maximumSpeed: 1500,         // Fastest hook speed after difficulty increases.
+        speedIncreasePerBox: 8,  // Extra hook speed for each safely placed box.
         travelMargin: 115,         // Distance kept clear from each side of the visible world.
         dropGap: 500,              // Vertical space from tower top to crane hook.
         hookSpriteSize: 96,        // Display width/height of crane-hook.svg in logical pixels.
